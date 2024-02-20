@@ -1,11 +1,21 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@5.0.2
+
 jobs:
   build-and-test:
-    docker:
-      - image: cimg/node:16.10
+    executor: node/default
     steps:
       - checkout
       - node/install-packages:
           pkg-manager: npm
+      - run: node --version
       - run:
           name: Run tests
           command: npm test
+
+workflows:
+  test_and_lint:
+    jobs:
+      - build-and-test
