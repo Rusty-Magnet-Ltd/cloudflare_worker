@@ -8,9 +8,10 @@ export default {
 
 		// bot score has to be optional for free zones
 		const resp= {
-				asn: cfobj["asn"],
-				country: cfobj["country"],
-				bot_score: cfobj['botManagement']['score'] ?? "not found",
+				asn_number: cfobj?.asn,
+				asn_name: cfobj?.asOrganization,
+				country: cfobj?.country,
+				bot_score: cfobj?.botManagement?.score,
 				attestation: req.headers.has('att'),
 				attestation_value: req.headers.get('att'),
 		}
