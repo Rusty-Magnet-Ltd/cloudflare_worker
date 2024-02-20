@@ -11,11 +11,19 @@ jobs:
       - node/install-packages:
           pkg-manager: npm
       - run: node --version
+      -
       - run:
           name: Run tests
           command: npm test
+
+  check-wrangler-ok:
+    executor: node/default
+    steps:
+      - run: npx wrangler version
+
 
 workflows:
   test_and_lint:
     jobs:
       - build-and-test
+      - check-wrangler-ok
