@@ -12,10 +12,18 @@ jobs:
           pkg-manager: npm
       - run: node --version
       - run: npm test
+      - run: echo "hello" > test.txt
+      - persist_to_workspace:
+           root: ~/project
+           paths:
+             - .
 
   check-wrangler-ok:
     executor: node/default
     steps:
+      - attach_workspace:
+          at: ~/project
+      - run: cat test.txt
       - run: npx wrangler version
 
 
