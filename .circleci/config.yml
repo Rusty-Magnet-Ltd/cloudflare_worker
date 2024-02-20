@@ -1,0 +1,37 @@
+version: 2.1
+
+orbs:
+  node: circleci/node@5.0.2
+
+jobs:
+  build-and-test:
+    executor: node/default
+    steps:
+      - checkout
+      - node/install-packages:
+          pkg-manager: npm
+      - run: node --version
+      - run: npm test
+      - run: echo "hello" > test.txt
+      - persist_to_workspace:
+           root: ~/project
+           paths:
+             - .
+
+  check-wrangler-ok:
+    executor: node/default
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run: cat test.txt
+      - run: npx wrangler version
+
+
+workflows:
+  test_and_lint:
+    jobs:
+      - build-and-test
+      - check-wrangler-ok:
+          requires:
+            - build-and-test
+
