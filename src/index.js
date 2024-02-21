@@ -1,14 +1,16 @@
 import {
-	error,              // creates error Responses
-	json,               // creates JSON Responses
-	Router,             // the Router itself
+	error,              // error Responses
+	json,               // JSON Responses
+	Router
 } from 'itty-router'
 
 const router = Router()
 
 router
 	// GET todos - just return some data!
-	.get('/', ( req ) => req.cf || error(404, 'That todo was not found'))
+	.get('/',
+		( req ) => req.cf || error(500, 'can\'t access Cloudflare object ')
+	)
 
 	// return a 404 for anything else
 	.all('*', () => error(404))
