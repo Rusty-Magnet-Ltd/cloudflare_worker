@@ -18,6 +18,14 @@ jobs:
            paths:
              - .
 
+  lint:
+    executor: node/default
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run: eslint --version
+      - run: npx eslint .
+
   check-wrangler-ok:
     executor: node/default
     steps:
