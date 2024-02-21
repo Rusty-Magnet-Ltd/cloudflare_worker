@@ -18,6 +18,15 @@ jobs:
            paths:
              - .
 
+  lint:
+    executor: node/default
+    steps:
+      - attach_workspace:
+          at: ~/project
+      - run: npx eslint --version
+      - run: npm run lint
+
+
   check-wrangler-ok:
     executor: node/default
     steps:
@@ -31,6 +40,9 @@ workflows:
   test_and_lint:
     jobs:
       - build-and-test
+      - lint:
+          requires:
+            - build-and-test
       - check-wrangler-ok:
           requires:
             - build-and-test

@@ -5,10 +5,13 @@
   "scripts": {
     "deploy": "wrangler deploy",
     "dev": "wrangler dev",
+    "lint": "eslint .",
     "start": "wrangler dev",
     "test": "jest"
   },
   "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "eslint": "^8.56.0",
     "jest": "^29.7.0",
     "wrangler": "^3.0.0"
   },
@@ -16,5 +19,8 @@
     "moduleNameMapper": {
       "^~(.*)$": "<rootDir>/src/$1"
     }
+  },
+  "dependencies": {
+    "@jest/globals": "^29.7.0"
   }
 }
