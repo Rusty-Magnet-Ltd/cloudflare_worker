@@ -39,6 +39,7 @@ workflows:
   test_and_lint:
     jobs:
       - build-and-test
+      - lint
       - check-wrangler-ok:
           requires:
             - build-and-test
