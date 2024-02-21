@@ -23,8 +23,9 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/project
-      - run: eslint --version
-      - run: npx eslint .
+      - run: npx eslint --version
+      - run: npm run lint
+
 
   check-wrangler-ok:
     executor: node/default
