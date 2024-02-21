@@ -21,6 +21,7 @@
     }
   },
   "dependencies": {
-    "@jest/globals": "^29.7.0"
+    "@jest/globals": "^29.7.0",
+    "itty-router": "^4.0.27"
   }
 }
