@@ -8,22 +8,27 @@
     "dev": "wrangler dev",
     "lint": "eslint .",
     "start": "wrangler dev",
-    "test": "jest"
+    "test": "jest",
+    "vitest": "vitest run --coverage"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
+    "@vitest/coverage-v8": "^1.4.0",
     "eslint": "^8.57.0",
     "jest": "^29.7.0",
+    "node-mocks-http": "^1.14.1",
+    "vitest": "^1.4.0",
     "wrangler": "^3.43.0"
   },
   "jest": {
-    "moduleNameMapper": {
-      "^~(.*)$": "<rootDir>/src/$1"
-    }
+    "bail": false,
+    "verbose": true,
+    "transform": {}
   },
   "dependencies": {
     "@jest/globals": "^29.7.0",
     "dotenv": "^16.4.5",
+    "hono": "^4.2.1",
     "itty-router": "^5.0.5"
   }
 }
