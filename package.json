@@ -3,6 +3,7 @@
   "version": "0.0.2",
   "private": true,
   "scripts": {
+    "whoami": "wrangler whoami",
     "deploy": "wrangler deploy",
     "dev": "wrangler dev",
     "lint": "eslint .",

@@ -1,10 +1,25 @@
-import { AutoRouter } from 'itty-router' // ~1kB
+import { AutoRouter, error } from 'itty-router'
 
-const router = AutoRouter()
+// upstream middleware to embed a start time
+const withBenchmarking = (request) => {
+	request.start = Date.now()
+}
 
-router
-    .get('/hello/:name', ({ name }) => `Hello, ${name}!`)
-    .get('/json', () => [1,2,3])
-    .get('/promises', () => Promise.resolve('foo'))
+// downstream handler to log it all out
+const logger = (res, req) => {
+	console.log(res.status, req.url, Date.now() - req.start,  'ms')
+}
 
-export default router
+// now let's create the router
+const router = AutoRouter({
+	port: 3001,
+	before: [withBenchmarking],
+	missing: () => error(404, 'Custom 404 message.'),
+	finally: [logger],
+})
+
+router.get('/', () => 'Success!')
+router.get('/info', ( req ) => req.cf || error(500, 'can\'t access Cloudflare object '))
+export default {
+    fetch: router.fetch,
+}
