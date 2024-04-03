@@ -4,7 +4,8 @@ module.exports = {
         "es2021": true,
         "jest": false
     },
-    "extends": "eslint:recommended",
+    "plugins": ["vitest"],
+    "extends": ["plugin:vitest/recommended"],
     "overrides": [
         {
             "env": {
@@ -23,5 +24,16 @@ module.exports = {
         "sourceType": "module"
     },
     "rules": {
+        "vitest/max-nested-describe": [
+            "error",
+            {
+                "max": 3
+            }
+        ]
+    },
+    "settings" :{
+        "vitest": {
+            "typecheck": true,
+        }
     }
 }
