@@ -8,8 +8,8 @@
     "dev": "wrangler dev",
     "lint": "eslint .",
     "start": "wrangler dev",
-    "test": "jest",
-    "vitest": "vitest run --coverage"
+    "test": "vitest --run",
+    "test-coverage": "vitest run --coverage"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
