@@ -9,5 +9,5 @@ Code powers [foobar.rustymagnet.xyz](https://foobar.rustymagnet.xyz/).
 
 ## Set up
 
-- Routing is based on [itty-router](https://itty.dev/itty-router) that was released as part of Cloudflare Workers.
-- The env vars are read from the `.dev.vars` file as the normal `.env` is used by Workers itself
+- Started on [itty-router](https://itty.dev/itty-router).  But docs and testing was clearer in [Hono](https://hono.dev/guides/examples).
+- The env vars are read from the `.dev.vars` file as the normal `.env` is used by Workers itself.

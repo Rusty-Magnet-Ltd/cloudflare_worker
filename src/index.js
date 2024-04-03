@@ -1,25 +1,17 @@
-import { AutoRouter, error } from 'itty-router'
+import { Hono } from 'hono'
 
-// upstream middleware to embed a start time
-const withBenchmarking = (request) => {
-	request.start = Date.now()
-}
+const app = new Hono()
 
-// downstream handler to log it all out
-const logger = (res, req) => {
-	console.log(res.status, req.url, Date.now() - req.start,  'ms')
-}
+app.get('/', (c) => c.text('success'))
 
-// now let's create the router
-const router = AutoRouter({
-	port: 3001,
-	before: [withBenchmarking],
-	missing: () => error(404, 'Custom 404 message.'),
-	finally: [logger],
+app.notFound((c) => {
+    return c.text('RM custom 404 Message', 404)
 })
 
-router.get('/', () => 'Success!')
-router.get('/info', ( req ) => req.cf || error(500, 'can\'t access Cloudflare object '))
-export default {
-    fetch: router.fetch,
-}
+app.onError((err, c) => {
+    console.error(`${err}`)
+    return c.text('Custom Error Message', 500)
+})
+
+
+export default app
