@@ -1,3 +1,8 @@
+
+
+# Cloudflare workers can't ues a dotenv environment variable files
+.dev.vars
+
 # Logs
 
 logs
@@ -93,7 +98,6 @@ web_modules/
 .yarn-integrity
 
 # dotenv environment variable files
-
 .env
 .env.development.local
 .env.test.local
