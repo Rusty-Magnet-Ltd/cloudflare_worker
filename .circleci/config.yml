@@ -3,6 +3,11 @@ version: 2.1
 orbs:
   node: circleci/node@5.0.2
 
+  filter_deployable: &filter_deployable
+    filters:
+      branches:
+        only:
+          - master
 jobs:
   build-and-test:
     executor: node/default
@@ -56,3 +61,4 @@ workflows:
       - deploy-to-cloudflare:
           requires:
             - check-wrangler-ok
+          <<: *filter_deployable

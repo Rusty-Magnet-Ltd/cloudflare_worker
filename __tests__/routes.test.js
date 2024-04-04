@@ -1,5 +1,5 @@
 import { expect, it, describe } from 'vitest'
-import app from "../src";
+import app from "../src/routes";
 
 
 describe('unit test environment ready', () => {
