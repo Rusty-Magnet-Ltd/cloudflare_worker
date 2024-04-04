@@ -52,4 +52,6 @@ workflows:
       - check-wrangler-ok:
           requires:
             - build-and-test
-
+      - deploy-to-cloudflare:
+          requires:
+            - check-wrangler-ok
