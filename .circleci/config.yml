@@ -34,13 +34,13 @@ jobs:
           at: ~/project
       - run: cat test.txt
       - run: npx wrangler --version
+      - run: npx wrangler whoami
 
   deploy-to-cloudflare:
     executor: node/default
     steps:
       - attach_workspace:
           at: ~/project
-      - run: npx wrangler whoami
       - run: npx wrangler deploy
 
 workflows:
