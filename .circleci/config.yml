@@ -8,8 +8,6 @@ jobs:
     executor: node/default
     steps:
       - checkout
-      - node/install-packages:
-          pkg-manager: npm
       - run: npx vitest --version
       - run: npx vitest --run
       - run: echo "hello" > test.txt
