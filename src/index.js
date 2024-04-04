@@ -4,7 +4,7 @@ const app = new Hono()
 
 
 app.get('/', (c) => {
-    return c.body('Thank you for coming', 200, {
+    return c.body('thanks for visiting', 200, {
         'Content-Type': 'text/plain',
         })
     })
