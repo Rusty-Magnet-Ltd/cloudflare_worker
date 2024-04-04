@@ -7,8 +7,8 @@ const app = new Hono()
 /* static landing page */
 app.get('/static/*', serveStatic({ root: './', manifest }))
 app.get('/favicon.ico', serveStatic({ path: './favicon.ico' }))
-
 app.get('/', (c) => c.redirect('/static/home/index.html'))
+
 app.get('/health', (c) => c.text('success'))
 
 app.notFound((c) => {
