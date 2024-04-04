@@ -1,15 +1,13 @@
 import { Hono } from 'hono'
-import { serveStatic } from 'hono/cloudflare-workers'
-import manifest from '__STATIC_CONTENT_MANIFEST'
 
 const app = new Hono()
 
-/* static landing page */
-app.get('/static/*', serveStatic({ root: './', manifest }))
-app.get('/favicon.ico', serveStatic({ path: './favicon.ico' }))
-app.get('/', (c) => c.redirect('/static/home/index.html'))
 
-app.get('/health', (c) => c.text('success'))
+app.get('/', (c) => {
+    return c.body('Thank you for coming', 200, {
+        'Content-Type': 'text/plain',
+        })
+    })
 
 app.notFound((c) => {
     return c.text('RM custom 404 Message', 404)
@@ -17,7 +15,7 @@ app.notFound((c) => {
 
 app.onError((err, c) => {
     console.error(`${err}`)
-    return c.text('Custom Error Message', 500)
+    return c.text('RM custom Error Message', 500)
 })
 
 

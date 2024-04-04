@@ -1,6 +1,6 @@
 {
   "name": "foo",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "private": true,
   "scripts": {
     "whoami": "wrangler whoami",
@@ -17,11 +17,6 @@
     "eslint-plugin-vitest": "^0.4.1",
     "vitest": "^1.4.0",
     "wrangler": "^3.43.0"
-  },
-  "jest": {
-    "bail": false,
-    "verbose": true,
-    "transform": {}
   },
   "dependencies": {
     "hono": "^4.2.1",
