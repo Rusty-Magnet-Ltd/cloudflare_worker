@@ -10,4 +10,5 @@ Code powers [foobar.rustymagnet.xyz](https://foobar.rustymagnet.xyz/).
 ## Set up
 
 - Started on [itty-router](https://itty.dev/itty-router).  But docs and testing was clearer in [Hono](https://hono.dev/guides/examples).
-- The env vars are read from the `.dev.vars` file as the normal `.env` is used by Workers itself.
+- Local dev uses a `.dev.vars` file as the normal `.env` file is used by the Worker set up itself.
+- A [Boilerplate](https://github.com/marcosrjjunior/hono-boilerplate/tree/main/src/routes) on structuring project.
