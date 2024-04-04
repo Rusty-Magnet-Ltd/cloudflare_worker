@@ -9,9 +9,9 @@ jobs:
     steps:
       - checkout
       - node/install-packages:
-          pkg-manager: npm
-      - run: node --version
-      - run: npm test
+          pkg-manager: npm     # vitest will fail to find index.js if npm not installed
+      - run: npx vitest --version
+      - run: npx vitest --run
       - run: echo "hello" > test.txt
       - persist_to_workspace:
            root: ~/project
