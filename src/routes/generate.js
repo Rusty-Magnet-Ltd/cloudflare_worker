@@ -2,7 +2,6 @@ import { Hono } from 'hono'
 import { sign } from 'hono/jwt'
 
 export const SecurityHeaderName = 'X-Header';
-export const SecurityHeaderValue = "pickle"
 const secret = 'mySecretKey'
 
 const generate = new Hono()
