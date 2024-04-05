@@ -7,8 +7,8 @@ describe('unit test environment ready', () => {
         expect(1 === 1).toBeTruthy();
     })
 })
-describe('suite', () => {
-    it('ok', async () => {
+describe('basic set up of Hono working', () => {
+    it('root path ok', async () => {
         const res = await app.request('/')
         expect(res.status).toBe(200)
     })
