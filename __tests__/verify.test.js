@@ -1,6 +1,6 @@
 import {describe, expect, it} from "vitest";
 import app from "../src/routes";
-import {SecurityHeaderName, SecurityHeaderValue} from "../src/routes/generate";
+import {generateUserPayload, SecurityHeaderName, signPayload} from "../src/routes/generate";
 
 describe('test verify route', () => {
     it('verify request without header', async () => {
@@ -8,15 +8,16 @@ describe('test verify route', () => {
         expect(res.status).toBe(400)
     })
 
-    it('verify request works', async () => {
+    it('verify ok', async () => {
+        const payload = generateUserPayload()
+        const token = await signPayload(payload)
         const req = new Request('http://localhost:8787/verify', {
             method: 'GET',
             headers: {
-                [SecurityHeaderName]: SecurityHeaderValue,
+                [SecurityHeaderName]: token,
             },
         })
         const res = await app.request(req)
-        console.log(res)
         expect(res.status).toBe(201)
     })
 
