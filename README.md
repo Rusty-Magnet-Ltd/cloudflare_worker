@@ -12,3 +12,4 @@ Code powers [foobar.rustymagnet.xyz](https://foobar.rustymagnet.xyz/).
 - Started on [itty-router](https://itty.dev/itty-router).  But docs and testing was clearer in [Hono](https://hono.dev/guides/examples).
 - Local dev uses a `.dev.vars` file as the normal `.env` file is used by the Worker set up itself.
 - A [Boilerplate](https://github.com/marcosrjjunior/hono-boilerplate/tree/main/src/routes) on structuring project.
+- The JWT work was based these [helpers](https://hono.dev/helpers/jwt)

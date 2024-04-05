@@ -1,34 +1,45 @@
-import {SecurityHeaderName, SecurityHeaderValue} from "./generate";
 import {Hono} from "hono";
+import { verify } from 'hono/jwt'
 import { validator } from 'hono/validator';
+import { SecurityHeaderName } from "./generate";
 
-const verify = new Hono()
+const vrfy = new Hono()
+const secretKey = 'mySecretKey'
 
 
-verify.get
+function checkPayload(rawPayload) {
+    return Object.hasOwn(rawPayload, 'user') ? rawPayload['user'] : 'user not found';
+}
+
+vrfy.get
 ('/verify',
-    validator('header', (value, c) => {
-        const xHeader = value[SecurityHeaderName.toLowerCase()]
-        if (!xHeader || typeof xHeader !== 'string') {
-            return c.text('Invalid!', 400)
+    validator('header', async (value, c) => {
+        const tokenToVerify = value[SecurityHeaderName.toLowerCase()]
+        if (!tokenToVerify || typeof tokenToVerify !== 'string') {
+            return c.text('Invalid! Either no value or value not a string', 400)
         }
-        if (xHeader !== SecurityHeaderValue){
-            return c.text('wrong secret value', 400)
-        }
-        return {
-            val: xHeader,
+        try {
+            const decodedPayload = await verify(tokenToVerify, secretKey, 'HS256')
+            return {
+                val: decodedPayload,
+            }
+        } catch (e) {
+             console.log(`Verify failed.  ${e.message}.`);
+             return c.text('jwt verify failed', 401)
         }
     }),
 
     (c) => {
         const { val } = c.req.valid('header')
+
+
         return c.json(
             {
-                message: 'thanks for verifying header! Secret value was: ' + val,
+                message: `Success.  Verified message was from: ${checkPayload(val)}`
             },
             201
         )
 
     })
 
-export default verify
+export default vrfy
