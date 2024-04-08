@@ -3,7 +3,7 @@ import { logger } from 'hono/logger'
 
 import generate from './generate'
 // @ts-ignore
-import verify from './verify.js';
+import verify from './verify';
 import { poweredBy } from 'hono/powered-by'
 import home from "./home";
 const app = new Hono()

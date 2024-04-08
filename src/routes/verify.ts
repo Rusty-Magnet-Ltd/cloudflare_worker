@@ -2,14 +2,13 @@ import {Hono} from "hono";
 import { verify } from 'hono/jwt'
 import { validator } from 'hono/validator';
 import { SecurityHeaderName } from "./generate";
+import {SecretPayload} from "../model/payload";
 
 const vrfy = new Hono()
 const secretKey = 'mySecretKey'
 
 
-function checkPayload(rawPayload) {
-    return Object.hasOwn(rawPayload, 'user') ? rawPayload['user'] : 'user not found';
-}
+
 
 vrfy.get
 ('/verify',
@@ -31,14 +30,14 @@ vrfy.get
 
     (c) => {
         const { val } = c.req.valid('header')
+        const originalPayload = val as SecretPayload;
 
         return c.json(
             {
-                message: `Success.  Verified message was from: ${checkPayload(val)}`
+                message: `Success.  Verified message was from: ${originalPayload.name}`
             },
             201
         )
-
     })
 
 export default vrfy

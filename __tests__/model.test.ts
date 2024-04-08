@@ -1,15 +1,15 @@
 import { expect, it, describe } from 'vitest'
-import {newPayload} from "../src/model/payload";
+import {SecretPayload} from "../src/model/payload";
 
 
 describe('test creating payload', () => {
     const actor = "Tom Hanks"
-    it(`with name of ${actor}`, () => {
-        const payload = newPayload(actor);
+    const payload = new SecretPayload(actor)
+    it(`name ${actor} ok`, () => {
         expect(payload.name === actor);
     })
-    it(`with no name and default`, () => {
-        const payload = newPayload();
-        expect(payload.name === "bob");
+    it(`name validation ok`, () => {
+        expect(payload.getUsername() === actor);
     })
 })
+

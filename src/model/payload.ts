@@ -1,19 +1,19 @@
 
-type SecretPayload = {
-    name: string;
-    roles: string[];
-    expiry: number;
+
+export class SecretPayload {
+    readonly name: string;
+    readonly roles: string[] = ['admin'];
+    readonly expiry: number = Math.floor(Date.now() / 1000) + 60 * 1;
+    constructor(name: string) {
+        this.name = name;
+    }
+    getUsername():string {
+        if (this.name) {
+            return this.name
+        }
+        return 'user\'s name not found';
+    }
+
 }
 
-export function newPayload(user="bob"): SecretPayload {
-
-    const payload: SecretPayload = {
-        name: user,
-        roles: ['admin'],
-        expiry: Math.floor(Date.now() / 1000) + 60 * 1,
-    };
-
-    return payload;
-
-}
 

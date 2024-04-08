@@ -1,6 +1,7 @@
 import {describe, expect, it} from "vitest";
 import app from "../src/routes";
 import {generateUserPayload, SecurityHeaderName, signPayload} from "../src/routes/generate";
+import {SecretPayload} from "../src/model/payload";
 
 describe('test verify route', () => {
     it('verify request without header', async () => {
@@ -9,7 +10,7 @@ describe('test verify route', () => {
     })
 
     it('verify ok', async () => {
-        const payload = generateUserPayload()
+        const payload = new SecretPayload("Tom Hanks")
         const token = await signPayload(payload)
         const req = new Request('http://localhost:8787/verify', {
             method: 'GET',
