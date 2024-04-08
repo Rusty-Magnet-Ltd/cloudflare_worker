@@ -1,5 +1,6 @@
 import { Hono } from 'hono'
 import { sign } from 'hono/jwt'
+import { JWTPayload } from 'hono/utils/jwt/types';
 
 export const SecurityHeaderName = 'X-Header';
 const secret = 'mySecretKey'
@@ -21,7 +22,8 @@ export function generateUserPayload() {
     }
     return payload
 }
-export async function signPayload(payload) {
+
+export async function signPayload(payload: JWTPayload) {
     return await sign(payload, secret, 'HS256')
 }
 
