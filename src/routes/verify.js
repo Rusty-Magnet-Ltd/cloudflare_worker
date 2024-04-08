@@ -32,7 +32,6 @@ vrfy.get
     (c) => {
         const { val } = c.req.valid('header')
 
-
         return c.json(
             {
                 message: `Success.  Verified message was from: ${checkPayload(val)}`
