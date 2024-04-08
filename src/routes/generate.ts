@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import { sign } from 'hono/jwt'
 import { JWTPayload } from 'hono/utils/jwt/types';
+import {SecretPayload} from "../model/payload";
 
 export const SecurityHeaderName = 'X-Header';
 const secret = 'mySecretKey'
@@ -12,16 +13,6 @@ generate.use(async (c, next) => {
     await next()
 })
 
-// Add a custom header
-
-export function generateUserPayload() {
-    const payload = {
-        user: 'user123',
-        role: 'admin',
-        exp: Math.floor(Date.now() / 1000) + 60 * 1,
-    }
-    return payload
-}
 
 export async function signPayload(payload: JWTPayload) {
     return await sign(payload, secret, 'HS256')
@@ -29,7 +20,7 @@ export async function signPayload(payload: JWTPayload) {
 
 generate.use('/generate', async (c, next) => {
     await next()
-    const payload = generateUserPayload()
+    const payload = new SecretPayload("Bob")
     const token = signPayload(payload)
     c.res.headers.set(SecurityHeaderName, await token)
 })
