@@ -1,5 +1,5 @@
 name = "foo"
-main = "src/routes/index.js"
+main = "src/routes/index.ts"
 compatibility_date = "2024-01-29"
 workers_dev = false
 
