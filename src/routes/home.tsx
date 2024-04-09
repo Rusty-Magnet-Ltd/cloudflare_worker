@@ -2,8 +2,17 @@ import { Hono } from 'hono'
 import { css, Style } from 'hono/css'
 
 const home = new Hono()
-
-
+const tableClass = css`
+    border-collapse: collapse;
+    border: 2px solid rgb(140 140 140);
+    font-family: sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    `
+const tableD = css `
+    border: 1px solid rgb(160 160 160);
+    padding: 8px 10px;
+`
 const headerClass = css`
     background-color: orange;
     color: white;
@@ -18,21 +27,32 @@ const globalClass = css`
     }
 `
 const SiteFeatures = () => {
-    const features = ['Cloudflare Worker', 'Hono tiny router', 'JSX templating engine from React' ]
+    const features = [{
+        title: "hono",
+        description: 'Tiny and lightweight',
+    }, {
+        title: "wrangler",
+        description: 'Simple deploy with CI/CD to Cloudflare',
+    },{
+        title: "JWT",
+        description: 'For /generate and /verify',
+    }]
 
     return (
         <div class={globalClass}>
-            <table>
+            <br/>
+            <table class={tableClass}>
                 <thead>
                 <tr>
-                    <th scope="col">Feature</th>
+                    <th scope="col"></th>
+                    <td class={tableD}><b>Feature</b></td>
                 </tr>
                 </thead>
                 <tbody>
                     {features.map((feature) => (
                         <tr>
-                            <th scope="row">-</th>
-                            <td>{feature}</td>
+                            <th class={tableD} scope="row">{feature.title}</th>
+                            <td class={tableD}>{feature.description}</td>
                         </tr>
                     ))}
                 </tbody>
@@ -46,17 +66,14 @@ home.get('/', (c) => {
     return c.html(
         <html>
 
-        <head>
+        <head >
             <Style/>
-            <header>Header from Hono</header>
+            <header class={headerClass}>Cloudflare Worker</header>
         </head>
         <body>
-        <h3 class={headerClass}>Hono with Cloudflare Worker</h3>
             <SiteFeatures />
         </body>
-        <footer>
-            foioter
-        </footer>
+        <footer></footer>
         </html>
     )
 })
