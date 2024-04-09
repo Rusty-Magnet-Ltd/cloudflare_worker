@@ -1,13 +1,11 @@
 import { Hono } from 'hono'
 import { logger } from 'hono/logger'
-
-import generate from './generate'
-// @ts-ignore
-import verify from './verify';
 import { poweredBy } from 'hono/powered-by'
+import generate from './generate'
+import verify from './verify';
 import home from "./home";
-const app = new Hono()
 
+const app = new Hono()
 
 app.use(logger())
 app.use(poweredBy())
