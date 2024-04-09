@@ -1,6 +1,6 @@
 import {describe, expect, it} from "vitest";
 import app from "../src/routes";
-import {generateUserPayload, SecurityHeaderName, signPayload} from "../src/routes/generate";
+import {SecurityHeaderName, signPayload} from "../src/routes/generate";
 import {SecretPayload} from "../src/model/payload";
 
 describe('test verify route', () => {

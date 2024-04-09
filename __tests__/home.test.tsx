@@ -1,31 +1,30 @@
 import {describe, expect, it} from "vitest";
 import app from "../src/routes";
+import {SecurityHeaderName} from "../src/routes/generate";
+import {checkForFooHeaders} from "../src/model/foo-headers";
+
+const mockReqWithHeaders = new Request('http://localhost:8787/', {
+    method: 'GET',
+    headers: {
+        'foo-ip': '192.168.0.1',
+        'foo-asn': '12345',
+        'foo-country': 'NL',
+        'user-agent': 'foobar user agent'
+    },
+})
 
 describe('test home route', () => {
     it('return a 200 and powered by header', async () => {
-        const res = await app.request('/')
+        const res = await app.request(mockReqWithHeaders)
         expect(res.status).toBe(200)
         const val = res.headers.get('x-powered-by') as string
         expect(val.toLowerCase()).toBe('hono')
     })
+
+    it('add foo headers to mimic Cloudflare added request headers', async () => {
+        const res = await app.request(mockReqWithHeaders)
+        const htmlResp = await res.text() // doing here as one time use
+        expect(htmlResp.includes("zag")).toBeFalsy()
+        expect(htmlResp.includes("foo-")).toBeTruthy()
+    })
 })
-
-
-
-
-// const fooHeaders: FooHeaders[] = [{
-//     name: "User-Agent",
-//     "value": c.req.header('User-Agent'),
-// }, {
-//     title: "asn",
-//     description: c.req.header('foo-asn'),
-// },{
-//     title: "Country",
-//     description: c.req.header('foo-country'),
-// },{
-//     title: "IP address",
-//     description: c.req.header('foo-ip'),
-// },{
-//     title: "Cloudflare Ray ID",
-//     description: c.req.header('foo-ray-id'),
-// }]}
