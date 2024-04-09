@@ -1,8 +1,9 @@
 import { Hono } from 'hono'
 import { css, Style } from 'hono/css'
-import type { FC } from 'hono/jsx'
+import {checkForFooHeaders, FooHeader} from "../model/foo-headers";
 
 const home = new Hono()
+
 const tableClass = css`
     border-collapse: collapse;
     border: 2px solid rgb(140 140 140);
@@ -19,7 +20,6 @@ const headerClass = css`
     color: white;
     padding: 1rem;
     `
-
 const globalClass = css`
     :-hono-global {
         html {
@@ -27,6 +27,7 @@ const globalClass = css`
         }
     }
 `
+
 const SiteFeatures = () => {
     const features = [{
         title: "hono",
@@ -62,12 +63,22 @@ const SiteFeatures = () => {
     )
 }
 
+const FooHeaders = ({ fooHeaders }) => {
+    const numbers = ['one', 'two', 'three']
+
+    return (
+        <div>
+            {fooHeaders.map((fh) => (
+                <h1>here{fh.name}{fh.value}</h1>
+            ))}
+        </div>
+    )
+
+    //
+}
 
 home.get('/', (c) => {
-    const headers = c.req.raw.headers
-    console.log(headers)
-
-
+    const fooHeaders = checkForFooHeaders(c.req.raw.headers)
 
     return c.html(
         <html>
@@ -77,7 +88,10 @@ home.get('/', (c) => {
             <header class={headerClass}>Cloudflare Worker</header>
         </head>
         <body>
-            <SiteFeatures />
+
+        <FooHeaders fooHeaders={fooHeaders}/>
+        <SiteFeatures/>
+
 
         </body>
         <footer></footer>

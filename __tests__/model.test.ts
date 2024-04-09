@@ -1,6 +1,6 @@
 import { expect, it, describe } from 'vitest'
 import {SecretPayload} from "../src/model/payload";
-import {FooHeader} from "../src/model/foo-headers";
+import {checkForFooHeaders, FooHeader} from "../src/model/foo-headers";
 
 const actor = "Tom Hanks"
 describe('test creating payload', () => {
@@ -24,4 +24,17 @@ describe('test foo headers interface', () => {
     it(`check header inits ok`, () => {
         expect(header.name == actor);
     })
+
+    it(`create map of headers and check find headers with foo prefix`, () => {
+
+        const allHeaders: Headers = new Headers();
+        allHeaders.append("Content-Type", "application/json");
+        allHeaders.append("Cookie", "This is a demo cookie");
+        allHeaders.append("compression", "gzip");
+        allHeaders.append("foo-boo", "foobar");
+        const fooHeaders = checkForFooHeaders(allHeaders)
+        expect(fooHeaders).toHaveLength(1);
+    })
+
+
 })
