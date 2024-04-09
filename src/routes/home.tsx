@@ -1,5 +1,6 @@
 import { Hono } from 'hono'
 import { css, Style } from 'hono/css'
+import type { FC } from 'hono/jsx'
 
 const home = new Hono()
 const tableClass = css`
@@ -63,6 +64,11 @@ const SiteFeatures = () => {
 
 
 home.get('/', (c) => {
+    const headers = c.req.raw.headers
+    console.log(headers)
+
+
+
     return c.html(
         <html>
 
@@ -72,6 +78,7 @@ home.get('/', (c) => {
         </head>
         <body>
             <SiteFeatures />
+
         </body>
         <footer></footer>
         </html>
