@@ -15,10 +15,20 @@ const tableD = css `
     border: 1px solid rgb(160 160 160);
     padding: 8px 10px;
 `
+const unorderedList = css `
+    background: orange;
+    color: darkblue;
+    margin: 5px;
+    padding: 8px 10px;
+    font-family: sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+`
+
 const headerClass = css`
     background-color: orange;
     color: white;
-    padding: 1rem;
+    padding: 2rem;
     `
 const globalClass = css`
     :-hono-global {
@@ -27,19 +37,18 @@ const globalClass = css`
         }
     }
 `
-
-const SiteFeatures = () => {
-    const features = [{
-        title: "hono",
+const features = [{
+        title: 'hono',
         description: 'Tiny and lightweight',
     }, {
         title: "wrangler",
-        description: 'Simple deploy with CI/CD to Cloudflare',
+        description: 'Simple cli tool to deploy to Cloudflare',
     },{
         title: "JWT",
         description: 'For /generate and /verify',
     }]
 
+const SiteFeatures = () => {
     return (
         <div class={globalClass}>
             <br/>
@@ -63,35 +72,23 @@ const SiteFeatures = () => {
     )
 }
 
-const FooHeaders = ({ fooHeaders }) => {
-    const numbers = ['one', 'two', 'three']
-
-    return (
-        <div>
-            {fooHeaders.map((fh) => (
-                <h1>here{fh.name}{fh.value}</h1>
-            ))}
-        </div>
-    )
-
-    //
-}
 
 home.get('/', (c) => {
-    const fooHeaders = checkForFooHeaders(c.req.raw.headers)
+    const foos = checkForFooHeaders(c.req.raw.headers)
 
     return c.html(
         <html>
-
-        <head >
+        <head>
             <Style/>
             <header class={headerClass}>Cloudflare Worker</header>
         </head>
         <body>
-
-        <FooHeaders fooHeaders={fooHeaders}/>
         <SiteFeatures/>
 
+        <br/>
+        {foos.map((fh) => (
+            <ul class={unorderedList}>{fh.name}={fh.value}</ul>
+        ))}
 
         </body>
         <footer></footer>
