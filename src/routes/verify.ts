@@ -7,11 +7,10 @@ import {SecretPayload} from "../model/payload";
 const vrfy = new Hono()
 const secretKey = 'mySecretKey'
 
-vrfy.get
-('/verify',
+vrfy.get('/verify',
     validator('header', async (value, c) => {
         const tokenToVerify = value[SecurityHeaderName.toLowerCase()]
-        if (!tokenToVerify || typeof tokenToVerify as any !== 'string') {
+        if (!tokenToVerify || tokenToVerify.length === 0) {
             return c.text('Invalid! Either no value or value not a string', 400)
         }
         try {
@@ -20,9 +19,10 @@ vrfy.get
             return {
                 val: decodedPayload,
             }
-        } catch (err: any) {
-             console.log(`Verify failed.  ${err.message}.`);
-             return c.text('jwt verify failed', 401)
+        } catch (error) {
+            console.log(`Verify failed.`);
+            if (error instanceof Error) console.error(error.message)
+            return c.text('jwt verify failed', 401)
         }
     }),
 

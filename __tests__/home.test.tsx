@@ -1,7 +1,6 @@
 import {describe, expect, it} from "vitest";
 import app from "../src/routes";
-import {SecurityHeaderName} from "../src/routes/generate";
-import {checkForFooHeaders} from "../src/model/foo-headers";
+
 
 const mockReqWithHeaders = new Request('http://localhost:8787/', {
     method: 'GET',

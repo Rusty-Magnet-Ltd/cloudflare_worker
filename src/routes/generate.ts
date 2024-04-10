@@ -25,14 +25,10 @@ generate.use('/generate', async (c, next) => {
     c.res.headers.set(SecurityHeaderName, await token)
 })
 
-generate.get('/generate', async (c, next) => {
-
-
+generate.get('/generate', async (c) => {
     return c.body('thanks for visiting', 201, {
         'Content-Type': 'text/plain',
     })
 })
-
-
 
 export default generate
