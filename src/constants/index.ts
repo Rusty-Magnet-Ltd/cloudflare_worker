@@ -1,11 +1,14 @@
 
 export const features = [{
     title: 'hono',
-    description: 'Tiny and lightweight',
+    description: 'Tiny and lightweight routing',
 }, {
     title: "wrangler",
-    description: 'Simple cli tool to deploy to Cloudflare',
+    description: 'Cloudflare cli tool to deploy Worker',
 },{
-    title: "JWT",
-    description: 'For /generate and /verify',
+    title: "/generate",
+    description: 'create a signed JWT',
+},{
+    title: "/verify",
+    description: 'No tampering and non-expired JWT',
 }]
