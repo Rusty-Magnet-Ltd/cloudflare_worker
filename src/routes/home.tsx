@@ -1,52 +1,12 @@
 import { Hono } from 'hono'
-import { css, Style } from 'hono/css'
+import { Style } from 'hono/css'
 import {checkForFooHeaders, FooHeader} from "../model/foo-headers";
+import {unorderedList, tableD, tableClass, headerClass, globalClass } from "../constants/css";
+import {features} from "../constants";
 
 const home = new Hono()
 
-const tableClass = css`
-    border-collapse: collapse;
-    border: 2px solid rgb(140 140 140);
-    font-family: sans-serif;
-    font-size: 0.8rem;
-    letter-spacing: 1px;
-    `
-const tableD = css `
-    border: 1px solid rgb(160 160 160);
-    padding: 8px 10px;
-`
-const unorderedList = css `
-    background: orange;
-    color: darkblue;
-    margin: 5px;
-    padding: 8px 10px;
-    font-family: sans-serif;
-    font-size: 0.8rem;
-    letter-spacing: 1px;
-`
 
-const headerClass = css`
-    background-color: orange;
-    color: white;
-    padding: 2rem;
-    `
-const globalClass = css`
-    :-hono-global {
-        html {
-            font-family: Arial, Helvetica, sans-serif;
-        }
-    }
-`
-const features = [{
-        title: 'hono',
-        description: 'Tiny and lightweight',
-    }, {
-        title: "wrangler",
-        description: 'Simple cli tool to deploy to Cloudflare',
-    },{
-        title: "JWT",
-        description: 'For /generate and /verify',
-    }]
 
 const SiteFeatures = () => {
     return (
