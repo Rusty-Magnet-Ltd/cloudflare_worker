@@ -1,4 +1,4 @@
-import { css, Style } from 'hono/css'
+import { css } from 'hono/css'
 
 export const tableClass = css`
     border-collapse: collapse;

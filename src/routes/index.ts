@@ -11,7 +11,7 @@ app.use(logger())
 app.use(poweredBy())
 app.notFound((c) => {return c.text('RM custom 404 Message', 404)})
 app.onError((err, c) => {
-    console.error(`${err}`)
+    if (err instanceof Error) console.error(err)
     return c.text('RM custom Error Message', 500)
 })
 
