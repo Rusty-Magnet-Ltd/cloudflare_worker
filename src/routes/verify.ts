@@ -14,11 +14,8 @@ vrfy.get('/verify',
             return c.text('Invalid! Either no value or value not a string', 400)
         }
         try {
-            const decodedPayload = await verify(tokenToVerify, secretKey, 'HS256')
+            const decodedPayload = await verify(tokenToVerify, secretKey, 'HS256') as SecretPayload
             console.log(decodedPayload)
-            return {
-                val: decodedPayload,
-            }
         } catch (error) {
             console.log(`Verify failed.`);
             if (error instanceof Error) console.error(error.message)
@@ -27,13 +24,11 @@ vrfy.get('/verify',
     }),
 
     (c) => {
-        // @ts-ignore
-        const { val } = c.req.valid('header')
-        const originalPayload = val as SecretPayload;
 
+        c.req.valid('header')
         return c.json(
             {
-                message: `Success.  Verified message wasn't tampered.  User: ${originalPayload.name}`
+                message: `Success.  Verified message wasn't tampered.`
             },
             201
         )

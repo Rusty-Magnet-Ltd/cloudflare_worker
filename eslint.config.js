@@ -5,6 +5,7 @@ import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
     eslint.configs.recommended,
+    ...tseslint.configs.strict,
     ...tseslint.configs.recommendedTypeChecked,
     {
         languageOptions: {
@@ -16,4 +17,4 @@ export default tseslint.config(
         ignores: [".wrangler/"],
 
     },
-);tseslint.config(...tseslint.configs.strict,);
+);
