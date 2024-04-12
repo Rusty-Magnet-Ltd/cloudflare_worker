@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import { Style } from 'hono/css'
-import {checkForFooHeaders, FooHeader} from "../model/foo-headers";
+import {checkForFooHeaders} from "../model/foo-headers";
 import {unorderedList, tableD, tableClass, headerClass, globalClass } from "../constants/css";
 import {features} from "../constants";
 
