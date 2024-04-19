@@ -14,14 +14,14 @@ jobs:
     steps:
       - checkout
       - node/install-packages:
-          pkg-manager: npm     # vitest will fail to find index.ts if npm not installed
+          pkg-manager: npm # vitest will fail to find index.ts if npm not installed
       - run: npx vitest --version
       - run: npx vitest --run
       - run: echo "hello" > test.txt
       - persist_to_workspace:
-           root: ~/project
-           paths:
-             - .
+          root: ~/project
+          paths:
+            - .
 
   lint:
     executor: node/default
@@ -30,7 +30,6 @@ jobs:
           at: ~/project
       - run: npx eslint --version
       - run: npm run lint
-
 
   check-wrangler-ok:
     executor: node/default
