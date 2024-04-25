@@ -30,7 +30,7 @@ jobs:
           at: ~/project
       - run: npx eslint --version
       - run: npx eslint .
-      - run: npx prettier --check  .
+      - run: npx prettier --check --log-level=error  .
 
   check-wrangler-ok:
     executor: node/default
