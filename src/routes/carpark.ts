@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 
-const parking = new Hono();
+const carpark = new Hono();
 
-parking.get("/parking", (c) => c.text("Car park!"));
-export default parking;
+carpark.get("/carpark", (c) => c.text("Car park!"));
+export default carpark;
