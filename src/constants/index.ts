@@ -16,7 +16,7 @@ export const features = [
     description: "No tampering and non-expired JWT",
   },
   {
-  title: "/carpark",
+    title: "/carpark",
     description: "Landing area for requests that trip Firewall Rules",
   },
 ];
