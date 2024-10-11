@@ -7,8 +7,8 @@ const mockReqWithHeaders = new Request("http://localhost:8787/", {
     "foo-ip": "192.168.0.1",
     "foo-asn": "12345",
     "foo-country": "NL",
-    "user-agent": "foobar user agent",
-  },
+    "user-agent": "foobar user agent"
+  }
 });
 
 describe("test home route", () => {

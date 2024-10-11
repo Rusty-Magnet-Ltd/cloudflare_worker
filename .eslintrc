@@ -11,5 +11,7 @@
   ],
   "rules": {
     "no-console": 0 // no warning on console.log messages
-  }
+  },
+  "ignores": [".wrangler/*"]
+
 }

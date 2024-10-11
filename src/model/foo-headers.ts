@@ -4,7 +4,7 @@ export function checkForFooHeaders(headers: Headers): FooHeader[] {
     if (key.startsWith("foo")) {
       const temp: FooHeader = {
         name: key,
-        value: value,
+        value: value
       };
       fooHeaders.push(temp);
     }

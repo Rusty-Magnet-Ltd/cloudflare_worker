@@ -6,7 +6,7 @@ import {
   tableD,
   tableClass,
   headerClass,
-  globalClass,
+  globalClass
 } from "../constants/css";
 import { features } from "../constants";
 
@@ -26,7 +26,7 @@ const SiteFeatures = () => {
           </tr>
         </thead>
         <tbody>
-          {features.map((feature) => (
+          {features.map(feature => (
             <tr>
               <th class={tableD} scope="row">
                 {feature.title}
@@ -53,14 +53,16 @@ home.get("/", (c) => {
         <SiteFeatures />
 
         <br />
-        {foos.map((fh) => (
+        {foos.map(fh => (
           <ul class={unorderedList}>
-            {fh.name}={fh.value}
+            {fh.name}
+            =
+            {fh.value}
           </ul>
         ))}
       </body>
       <footer></footer>
-    </html>,
+    </html>
   );
 });
 

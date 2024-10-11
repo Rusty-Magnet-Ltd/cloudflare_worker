@@ -18,8 +18,8 @@ vrfy.get(
       const decodedPayload = (await verify(
         tokenToVerify,
         secretKey,
-        "HS256",
-      )) as SecretPayload;
+        "HS256"
+      )) as unknown as SecretPayload;
       console.log(decodedPayload);
     } catch (error) {
       console.log(`Verify failed.`);
@@ -32,11 +32,11 @@ vrfy.get(
     c.req.valid("header");
     return c.json(
       {
-        message: `Success.  Verified message wasn't tampered.`,
+        message: `Success.  Verified message wasn't tampered.`
       },
-      201,
+      201
     );
-  },
+  }
 );
 
 export default vrfy;
