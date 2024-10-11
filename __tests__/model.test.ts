@@ -16,7 +16,7 @@ describe("test creating payload", () => {
 describe("test foo headers interface", () => {
   const header: FooHeader = {
     name: actor,
-    value: "moon expert",
+    value: "moon expert"
   };
   it(`check header inits ok`, () => {
     expect(header.name == actor);

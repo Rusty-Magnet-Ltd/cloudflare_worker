@@ -15,8 +15,8 @@ describe("test verify route", () => {
     const req = new Request("http://localhost:8787/verify", {
       method: "GET",
       headers: {
-        [SecurityHeaderName]: token,
-      },
+        [SecurityHeaderName]: token
+      }
     });
     const res = await app.request(req);
     expect(res.status).toBe(201);

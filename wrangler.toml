@@ -11,3 +11,6 @@ bucket = "./assets"
 [dev]
 port = 8787
 local_protocol = "http"
+
+[observability]
+enabled = true

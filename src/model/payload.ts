@@ -9,6 +9,7 @@ export class SecretPayload {
     this.exp = Math.floor(Date.now() / 1000) + 60;
     this.nbf = Math.floor(Date.now() / 1000);
   }
+
   getUsername(): string {
     if (this.name) {
       return this.name;

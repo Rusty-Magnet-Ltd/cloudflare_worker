@@ -26,7 +26,7 @@ generate.use("/generate", async (c, next) => {
 
 generate.get("/generate", (c) => {
   return c.body("thanks for visiting", 201, {
-    "Content-Type": "text/plain",
+    "Content-Type": "text/plain"
   });
 });
 
