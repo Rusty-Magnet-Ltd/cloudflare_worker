@@ -14,7 +14,7 @@ app.notFound((c) => {
   return c.text("RM custom 404 Message", 404);
 });
 app.onError((err, c) => {
-  if (err instanceof Error) console.error(err);
+  console.error(err);
   return c.text("RM custom Error Message", 500);
 });
 

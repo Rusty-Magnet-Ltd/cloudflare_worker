@@ -5,8 +5,8 @@ workers_dev = false
 
 routes = [{ pattern = "foobar.rustymagnet.xyz", custom_domain = true }]
 
-[site]
-bucket = "./assets"
+# serves static folder
+assets = { directory = "./public/static", binding = "ASSETS" }
 
 [dev]
 port = 8787
