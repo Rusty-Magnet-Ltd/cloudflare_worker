@@ -1,19 +1,13 @@
 import { Hono } from "hono";
-import { logger } from "hono/logger";
 
 const carpark = new Hono();
 
-export const customLogger = (message: string, headers: Record<string, string>) => {
-  for (const key in headers) {
-    const data = headers[key];
-    console.log(`${key}: ${data}`);
-  }
-};
-
-carpark.use(logger(customLogger));
-
 carpark.get("/carpark", (c) => {
-  customLogger("Headers", c.req.header());
+  console.log("*** Headers ***");
+  for (const key in c.req.header()) {
+    const val = c.req.header(key);
+    console.log(`${key}: ${val}`);
+  }
   return c.html(
     <html>
       <head>
