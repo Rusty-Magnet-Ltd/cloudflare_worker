@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { verify } from "hono/jwt";
 import { validator } from "hono/validator";
 import { SecurityHeaderName } from "./generate";
-import { SecretPayload } from "../model/payload";
+import { JWTPayload } from "hono/utils/jwt/types";
 
 const vrfy = new Hono();
 const secretKey = "mySecretKey";
@@ -19,7 +19,7 @@ vrfy.get(
         tokenToVerify,
         secretKey,
         "HS256"
-      )) as unknown as SecretPayload;
+      )) as JWTPayload;
       console.log(decodedPayload);
     } catch (error) {
       console.log(`Verify failed.`);
