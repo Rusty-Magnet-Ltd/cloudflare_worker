@@ -22,10 +22,18 @@ sequenceDiagram
    CircleCI->>Cloudflare: upload new code with Wrangler cli
 ```
 
+### Debug Console logs
+
+```shell
+# watch console logs
+# also outputs Cloudflare added headers like cf-ipcountry, asn, ray-id, True IP
+wrangler tail foo
+```
+
 ## Design choices
 
 - Started on [itty-router](https://itty.dev/itty-router). But docs and testing was clearer in [Hono](https://hono.dev/guides/examples).
 - Local dev uses a `.dev.vars` file as the normal `.env` file is used by the Worker set up itself.
 - A [Boilerplate](https://github.com/marcosrjjunior/hono-boilerplate/tree/main/src/routes) on structuring project.
 - The JWT work was based these [helpers](https://hono.dev/helpers/jwt).
-- Linter is [tseslint](https://typescript-eslint.io/getting-started). Many wasted hourse debugging until I stripped it back with these (instructions)[https://khalilstemmler.com/blogs/typescript/eslint-for-typescript/].
+- Linter is [tseslint](https://typescript-eslint.io/getting-started). Many wasted hourse debugging until I stripped it back with these [instructions](https://khalilstemmler.com/blogs/typescript/eslint-for-typescript/).
