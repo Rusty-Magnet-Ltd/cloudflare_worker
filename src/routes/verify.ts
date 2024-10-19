@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { verify } from "hono/jwt";
 import { validator } from "hono/validator";
 import { SecurityHeaderName } from "./generate";
-import {JWTPayload} from "hono/utils/jwt/types";
+import { JWTPayload } from "hono/utils/jwt/types";
 
 const vrfy = new Hono();
 const secretKey = "mySecretKey";
