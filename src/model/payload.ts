@@ -1,19 +1,9 @@
-export class SecretPayload {
-  readonly name: string;
-  roles: string[];
-  exp: number;
-  nbf: number;
-  constructor(name: string) {
-    this.name = name;
-    this.roles = ["admin", "payroll"];
-    this.exp = Math.floor(Date.now() / 1000) + 60;
-    this.nbf = Math.floor(Date.now() / 1000);
-  }
+import { JWTPayload } from "hono/utils/jwt/types";
 
-  getUsername(): string {
-    if (this.name) {
-      return this.name;
-    }
-    return "user's name not found";
-  }
+export function NewPayload(name: string): JWTPayload {
+  return {
+    sub: name,
+    role: "admin",
+    exp: Math.floor(Date.now() / 1000) + 60 * 5 // Token expires in 5 minutes
+  };
 }
