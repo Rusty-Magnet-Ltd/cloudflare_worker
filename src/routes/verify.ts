@@ -5,7 +5,6 @@ import { SecurityHeaderName } from "./generate";
 import { JWTPayload } from "hono/utils/jwt/types";
 
 const vrfy = new Hono();
-const secretKey = "mySecretKey";
 
 vrfy.get(
   "/verify",
@@ -15,9 +14,10 @@ vrfy.get(
       return c.text("Invalid! Either no value or value not a string", 400);
     }
     try {
+      const secretkey: string = c.env.SECRET_KEY;
       const decodedPayload = (await verify(
         tokenToVerify,
-        secretKey,
+        secretkey,
         "HS256"
       )) as JWTPayload;
       console.log(decodedPayload);

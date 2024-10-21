@@ -1,6 +1,6 @@
 
 
-# Cloudflare workers can't ues a dotenv environment variable files
+# Cloudflare workers can't use a dotenv environment variable files as this is used by Cloudflare
 .dev.vars
 
 # Logs

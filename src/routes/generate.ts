@@ -4,9 +4,6 @@ import { JWTPayload } from "hono/utils/jwt/types";
 
 export const SecurityHeaderName = "X-Header";
 
-// TODO: move to env variable
-const secret = "mySecretKey";
-
 const generate = new Hono();
 
 generate.use(async (c, next) => {
@@ -14,20 +11,20 @@ generate.use(async (c, next) => {
   await next();
 });
 
-export async function signPayload(payload: JWTPayload) {
+export async function signPayload(payload: JWTPayload, secret: string) {
   return await sign(payload, secret, "HS256");
 }
 
 generate.use("/generate", async (c, next) => {
   await next();
-
+  const secretkey: string = c.env.SECRET_KEY;
   const payload: JWTPayload = {
     sub: "Bob",
     role: "admin",
     department: "hr",
     exp: Math.floor(Date.now() / 1000) + 60 * 5 // Token expires in 5 minutes
   };
-  const token = signPayload(payload);
+  const token = signPayload(payload, secretkey);
   c.res.headers.set(SecurityHeaderName, await token);
 });
 
