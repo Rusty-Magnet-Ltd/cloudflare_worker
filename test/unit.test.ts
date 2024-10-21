@@ -11,4 +11,12 @@ describe("test new JWT Payloads ", () => {
       assert.fail("iat of exp were not defined");
     }
   });
+
+  it("The regular JWT Payloads will give undefined values", () => {
+    const jwt: JWTPayload = {
+      sub: "Bob"
+    };
+    expect(jwt.exp).not.toBeDefined();
+    expect(jwt.iat).not.toBeDefined();
+  });
 });
