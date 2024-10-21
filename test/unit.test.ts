@@ -2,12 +2,6 @@ import { expect, it, assert, describe } from "vitest";
 import { NewPayload } from "../src/model/payload";
 import { JWTPayload } from "hono/utils/jwt/types";
 
-describe("unit test environment ready", () => {
-  it("vitest working", () => {
-    expect(1 === 1).toBeTruthy();
-  });
-});
-
 describe("test new JWT Payloads ", () => {
   it("Issue Date of JWT set to value lower than Expiry Date", () => {
     const jwt: JWTPayload = NewPayload("foo");
