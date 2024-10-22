@@ -16,9 +16,13 @@ carpark.get("/carpark", (c) => {
       <body>
         Car Park!
         <br />
-        {" "}
         <br />
-        <img src="charizard.png" alt="Pokemon's Charizard" width="360" height="230" />
+        <img
+          src="charizard.png"
+          alt="Pokemon's Charizard"
+          width="360"
+          height="230"
+        />
       </body>
     </html>
   );

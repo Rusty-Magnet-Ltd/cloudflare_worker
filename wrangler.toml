@@ -1,12 +1,17 @@
 name = "foo"
 main = "src/routes/index.ts"
 compatibility_date = "2024-01-29"
+compatibility_flags = ["nodejs_compat"]
+
 workers_dev = false
 
 routes = [{ pattern = "foobar.rustymagnet.xyz", custom_domain = true }]
 
 # serves static folder
 assets = { directory = "./public/static", binding = "ASSETS" }
+
+[vars]
+SECURITY_HEADER_NAME = "X-Header"
 
 [dev]
 port = 8787

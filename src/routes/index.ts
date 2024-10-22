@@ -6,7 +6,12 @@ import verify from "./verify";
 import home from "./home";
 import carpark from "./carpark";
 
-const app = new Hono();
+type Bindings = {
+  SECURITY_HEADER_NAME: string;
+  SECRET_KEY: string;
+};
+
+const app = new Hono<{ Bindings: Bindings }>();
 
 app.use(logger());
 app.use(poweredBy());
