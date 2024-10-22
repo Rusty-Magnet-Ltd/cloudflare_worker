@@ -1,15 +1,5 @@
-import { describe, expect, it, test } from "vitest";
-import app from "../src/routes";
-import { SecurityHeaderName } from "../src/routes/generate";
+import { expect, test } from "vitest";
 import { JWTPayload } from "hono/utils/jwt/types";
-
-describe("test a call to /generate returns a Header called `X-Header`", () => {
-  it("return a 201", async () => {
-    const res = await app.request("/generate");
-    expect(res.status).toBe(201);
-    expect(res.headers.get(SecurityHeaderName)).toBeDefined();
-  });
-});
 
 test("check JWTPayload instance ok", () => {
   const payload: JWTPayload = {

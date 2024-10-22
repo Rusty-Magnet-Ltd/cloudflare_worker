@@ -5,9 +5,13 @@ import generate from "./generate";
 import verify from "./verify";
 import home from "./home";
 import carpark from "./carpark";
-import { env } from "hono/adapter";
 
-const app = new Hono();
+type Bindings = {
+  SECURITY_HEADER_NAME: string;
+  SECRET_KEY: string;
+};
+
+const app = new Hono<{ Bindings: Bindings }>();
 
 app.use(logger());
 app.use(poweredBy());
@@ -17,11 +21,6 @@ app.notFound((c) => {
 app.onError((err, c) => {
   console.error(err);
   return c.text("RM custom Error Message", 500);
-});
-
-app.get("/env", (c) => {
-  const { secret } = env<{ SECRET_KEY: string }>(c);
-  return c.text(secret);
 });
 
 app.route("/", home);

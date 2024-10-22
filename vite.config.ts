@@ -2,14 +2,14 @@
 
 // Configure Vitest (https://vitest.dev/config/)
 
-import { defineConfig } from "vite";
+import { defineWorkersConfig } from "@cloudflare/vitest-pool-workers/config";
 
-export default defineConfig({
+export default defineWorkersConfig({
   test: {
-    /* for example, use global to avoid globals imports (describe, test, expect): */
-    // globals: true,
-    typecheck: {
-      enabled: true
+    poolOptions: {
+      workers: {
+        wrangler: { configPath: "./wrangler.toml" }
+      }
     }
   }
 });

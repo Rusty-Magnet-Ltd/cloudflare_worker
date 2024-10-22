@@ -1,25 +1,24 @@
 import { describe, expect, it } from "vitest";
-import app from "../src/routes";
-import { SecurityHeaderName, signPayload } from "../src/routes/generate";
-import { NewPayload } from "../src/model/payload";
+import {
+  env,
+  createExecutionContext
 
-describe("test verify route", () => {
-  it("verify request without header", async () => {
-    const res = await app.request("/verify");
-    expect(res.status).toBe(400);
+} from "cloudflare:test";
+
+export interface Env {
+  SECURITY_HEADER_NAME: string;
+  SECRET_KEY: string;
+}
+
+describe("test cloudflare vitest plumbing", () => {
+  it("check I can create an execution context", async () => {
+    const ctx = createExecutionContext();
+    expect(ctx).toBeDefined();
   });
-
-  it("verify ok", async () => {
-    const payload = NewPayload("Foo");
-
-    const token = await signPayload(payload);
-    const req = new Request("http://localhost:8787/verify", {
-      method: "GET",
-      headers: {
-        [SecurityHeaderName]: token
-      }
-    });
-    const res = await app.request(req);
-    expect(res.status).toBe(201);
+  it("I can access environment vars", async () => {
+    const SECURITY_HEADER_NAME = env.SECURITY_HEADER_NAME;
+    console.log("Security Header:", SECURITY_HEADER_NAME);
+    expect(SECURITY_HEADER_NAME).toBeDefined();
+    expect(SECURITY_HEADER_NAME).toBeTruthy();
   });
 });

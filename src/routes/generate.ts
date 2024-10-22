@@ -2,9 +2,12 @@ import { Hono } from "hono";
 import { sign } from "hono/jwt";
 import { JWTPayload } from "hono/utils/jwt/types";
 
-export const SecurityHeaderName = "X-Header";
+type Bindings = {
+  SECURITY_HEADER_NAME: string;
+  SECRET_KEY: string;
+};
 
-const generate = new Hono();
+const generate = new Hono<{ Bindings: Bindings }>();
 
 generate.use(async (c, next) => {
   console.log(`[${c.req.method}] ${c.req.url}`);
@@ -17,15 +20,14 @@ export async function signPayload(payload: JWTPayload, secret: string) {
 
 generate.use("/generate", async (c, next) => {
   await next();
-  const secretkey: string = c.env.SECRET_KEY;
   const payload: JWTPayload = {
     sub: "Bob",
     role: "admin",
     department: "hr",
     exp: Math.floor(Date.now() / 1000) + 60 * 5 // Token expires in 5 minutes
   };
-  const token = signPayload(payload, secretkey);
-  c.res.headers.set(SecurityHeaderName, await token);
+  const token = signPayload(payload, c.env.SECRET_KEY);
+  c.res.headers.set(c.env.SECURITY_HEADER_NAME, await token);
 });
 
 generate.get("/generate", (c) => {
