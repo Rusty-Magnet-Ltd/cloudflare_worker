@@ -1,7 +1,7 @@
 {
   "type": "module",
   "name": "foo",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "private": true,
   "scripts": {
     "whoami": "wrangler whoami",
@@ -26,8 +26,6 @@
     "wrangler": "^3.80.3"
   },
   "dependencies": {
-    "@typescript-eslint/eslint-plugin": "^8.8.1",
-    "@typescript-eslint/parser": "^8.8.1",
     "hono": "^4.6.4",
     "itty-router": "^5.0.18"
   }
