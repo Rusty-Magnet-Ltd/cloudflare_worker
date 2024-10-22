@@ -9,7 +9,10 @@ const vrfy = new Hono();
 vrfy.get(
   "/verify",
   validator("header", async (value, c) => {
-    const { SECURITY_HEADER_NAME } = env<{ SECURITY_HEADER_NAME: string }>(c, "workerd");
+    const { SECURITY_HEADER_NAME } = env<{ SECURITY_HEADER_NAME: string }>(
+      c,
+      "workerd"
+    );
     const tokenToVerify = value[SECURITY_HEADER_NAME.toLowerCase()];
     if (!tokenToVerify || tokenToVerify.length === 0) {
       return c.text("Invalid! Either no value or value not a string", 400);

@@ -1,9 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  env,
-  createExecutionContext
-
-} from "cloudflare:test";
+import { env, createExecutionContext } from "cloudflare:test";
 
 export interface Env {
   SECURITY_HEADER_NAME: string;
