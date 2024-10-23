@@ -11,7 +11,7 @@ const mockReqWithHeaders = new Request("http://localhost:8787/", {
   }
 });
 
-describe("test home route", () => {
+describe("test basic routes", () => {
   it("return a 200 and powered by header", async () => {
     const res = await app.request(mockReqWithHeaders);
     expect(res.status).toBe(200);
@@ -24,5 +24,13 @@ describe("test home route", () => {
     const htmlResp = await res.text(); // doing here as one time use
     expect(htmlResp.includes("zag")).toBeFalsy();
     expect(htmlResp.includes("foo-")).toBeTruthy();
+  });
+
+  it("check 404 returns what we expect", async () => {
+    const blackholeReq = new Request("http://localhost:8787/blackholesun", {
+      method: "GET"
+    });
+    const res = await app.request(blackholeReq);
+    expect(res.status).toBe(404);
   });
 });

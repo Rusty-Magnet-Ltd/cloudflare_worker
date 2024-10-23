@@ -2,26 +2,26 @@ import { Hono } from "hono";
 import { verify } from "hono/jwt";
 import { validator } from "hono/validator";
 import { JWTPayload } from "hono/utils/jwt/types";
-import { env } from "hono/adapter";
 
-const vrfy = new Hono();
+type Bindings = {
+  SECURITY_HEADER_NAME: string;
+  SECRET_KEY: string;
+};
+
+const vrfy = new Hono<{ Bindings: Bindings }>();
 
 vrfy.get(
   "/verify",
   validator("header", async (value, c) => {
-    const { SECURITY_HEADER_NAME } = env<{ SECURITY_HEADER_NAME: string }>(
-      c,
-      "workerd"
-    );
+    const SECURITY_HEADER_NAME = c.env.SECURITY_HEADER_NAME;
     const tokenToVerify = value[SECURITY_HEADER_NAME.toLowerCase()];
     if (!tokenToVerify || tokenToVerify.length === 0) {
       return c.text("Invalid! Either no value or value not a string", 400);
     }
     try {
-      const { SECRET_KEY } = env<{ SECRET_KEY: string }>(c, "workerd");
       const decodedPayload = (await verify(
         tokenToVerify,
-        SECRET_KEY,
+        c.env.SECRET_KEY,
         "HS256"
       )) as JWTPayload;
       console.log(decodedPayload);
@@ -36,7 +36,7 @@ vrfy.get(
     c.req.valid("header");
     return c.json(
       {
-        message: `Success.  Verified message wasn't tampered.`
+        message: `Success`
       },
       201
     );
