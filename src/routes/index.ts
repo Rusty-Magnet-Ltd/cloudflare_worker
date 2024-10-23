@@ -6,25 +6,21 @@ import verify from "./verify";
 import home from "./home";
 import carpark from "./carpark";
 
-type Bindings = {
-  SECURITY_HEADER_NAME: string;
-  SECRET_KEY: string;
-};
-
-const app = new Hono<{ Bindings: Bindings }>();
+const app = new Hono();
 
 app.use(logger());
 app.use(poweredBy());
 app.notFound((c) => {
-  return c.text("RM custom 404 Message", 404);
+  return c.text("404 Message", 404);
 });
 app.onError((err, c) => {
   console.error(err);
-  return c.text("RM custom Error Message", 500);
+  return c.text("500 Message", 500);
 });
 
 app.route("/", home);
 app.route("/", generate);
 app.route("/", verify);
 app.route("/", carpark);
+
 export default app;
