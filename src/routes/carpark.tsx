@@ -1,9 +1,16 @@
 import { Hono } from "hono";
+import { env } from "hono/adapter";
 
-const carpark = new Hono();
+interface Bindings {
+  ENVIRONMENT: "development" | "production";
+}
+
+const carpark = new Hono<{ Bindings: Bindings }>();
 
 carpark.get("/carpark", (c) => {
-  console.log("*** Headers ***");
+  const { ENVIRONMENT } = env(c);
+  console.log("[*]environment:", ENVIRONMENT);
+  console.log("[*]request headers");
   for (const key in c.req.header()) {
     const val = c.req.header(key);
     console.log(`${key}: ${val}`);

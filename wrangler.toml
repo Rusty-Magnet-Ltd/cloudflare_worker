@@ -1,6 +1,6 @@
 name = "foo"
 main = "src/routes/index.ts"
-compatibility_date = "2024-01-29"
+compatibility_date = "2024-08-15"
 compatibility_flags = ["nodejs_compat"]
 
 workers_dev = false
