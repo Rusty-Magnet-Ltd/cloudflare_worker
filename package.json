@@ -6,7 +6,7 @@
   "scripts": {
     "whoami": "wrangler whoami",
     "deploy": "wrangler deploy",
-    "dev": "wrangler dev",
+    "dev": "wrangler dev --env=testing",
     "lint": "eslint .",
     "prettier": "npx prettier --write .",
     "start": "wrangler dev",
