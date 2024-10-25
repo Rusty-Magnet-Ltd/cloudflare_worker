@@ -21,12 +21,10 @@ it("/carpark ok", async () => {
 
 ### Secrets
 
-Local code uses a `.dev.vars` to read secret environment variables.  The normal `.env` file is used by Cloudflare code.
-
-Default test values can be set in the `wrangler.toml` file as below; these can be source controlled safely as these are overridden locally by the .devs.vars ( local tests ) and production secrets.
+Local code uses a `.dev.vars` to read secret environment variables.  The normal `.env` file is used by Cloudflare code.  Default test values can be set in the `wrangler.toml` file as below; these can be `source controlled` safely as they only for CI/CD tests and don't get deployed to actually workers.  It would be different if the `wranger deploy --env=testing` was used:
 
 ```yaml
-[vars]
+[env.testing.vars]
 SECURITY_HEADER_NAME = "X-Header"
 SECRET_KEY = "dummy"
 ENVIRONMENT = "DEVELOPMENT"
@@ -53,7 +51,7 @@ sequenceDiagram
    Engineer->>GitHub: code change
    GitHub->>CircleCI: invoke change
    CircleCI->>CircleCI: set up Cloudflare's Wranger cli tool
-   CircleCI->>CircleCI: Lint, compile, scan, test code
+   CircleCI->>CircleCI: Lint and test code
    CircleCI->>Cloudflare: upload new code with Wrangler cli
 ```
 
