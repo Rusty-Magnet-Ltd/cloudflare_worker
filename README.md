@@ -4,6 +4,40 @@
 
 Code powers [foobar.rustymagnet.xyz](https://foobar.rustymagnet.xyz/).
 
+## Learnings
+
+### Testing
+
+Testing requires the `"cloudflare:test"` to get environment variables into `vitest`:
+
+```typescript
+import { env } from "cloudflare:test";
+
+it("/carpark ok", async () => {
+    const res = await app.request("/carpark", {}, env);
+    expect(res.status).toBe(200);
+});
+```
+
+### Secrets
+
+Local code uses a `.dev.vars` to read secret environment variables.  The normal `.env` file is used by Cloudflare code.
+
+Default test values can be set in the `wrangler.toml` file as below; these can be source controlled safely as these are overridden locally by the .devs.vars ( local tests ) and production secrets.
+
+[vars]
+SECURITY_HEADER_NAME = "X-Header"
+SECRET_KEY = "dummy"
+ENVIRONMENT = "DEVELOPMENT"
+
+### debug 
+Console logs available using the `tail` command in the cli tool.  This also outputs Cloudflare added headers like cf-ipcountry, asn, ray-id, True IP.
+
+```shell
+# 
+wrangler tail foo
+```
+
 ## Set up
 
 ### Deploy code to Cloudflare Worker
@@ -22,19 +56,12 @@ sequenceDiagram
    CircleCI->>Cloudflare: upload new code with Wrangler cli
 ```
 
-### Debug Console logs
 
-```shell
-# watch console logs
-# also outputs Cloudflare added headers like cf-ipcountry, asn, ray-id, True IP
-wrangler tail foo
-```
 
 ## Design choices
 
 - Started on [itty-router](https://itty.dev/itty-router). But docs and testing was clearer in [Hono](https://hono.dev/guides/examples).
 - The app uses `Grouping` of routers to make it simple to slim down code into discrete files.  Link [here](https://hono.dev/docs/api/routing).
-- Local dev uses a `.dev.vars` file as the normal `.env` file is used by the Worker set up itself.
 - Setting the `ENVIRONMENT` variable needs to be handled; a great article [here](https://www.raulmelo.me/en/blog/best-practices-for-handling-per-environment-config-js-ts-applications)
 - A [Boilerplate](https://github.com/marcosrjjunior/hono-boilerplate/tree/main/src/routes) on structuring project.
 - The JWT work was based these [helpers](https://hono.dev/helpers/jwt).

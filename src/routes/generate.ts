@@ -23,7 +23,8 @@ generate.use(async (c, next) => {
     exp: Math.floor(Date.now() / 1000) + 60 * 5 // Token expires in 5 minutes
   };
 
-  const token = signPayload(payload, c.env.SECRET_KEY);
+  const secret_key = c.env.SECRET_KEY;
+  const token = signPayload(payload, secret_key);
 
   c.res.headers.set(c.env.SECURITY_HEADER_NAME, await token);
   await next();
