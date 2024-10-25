@@ -22,8 +22,11 @@ SECURITY_HEADER_NAME = "X-Header"
 SECRET_KEY = "dummy"
 ENVIRONMENT = "TESTING"
 
+[env.production]
+SECURITY_HEADER_NAME = "X-Header-1"
+
 [env.production.vars]
-SECURITY_HEADER_NAME = "X-Header"
+ENVIRONMENT= "prod"
 
 [dev]
 port = 8787

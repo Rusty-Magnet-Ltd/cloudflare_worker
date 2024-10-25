@@ -40,6 +40,10 @@ The environment setting can be fed to vitest: `wrangler: { configPath: "./wrangl
 
 Ensure the correct `deploy flag` is set when uploading the Cloudflare `npx wrangler deploy -e prod`.
 
+Cloudflare suggest [here](https://developers.cloudflare.com/workers/wrangler/configuration/):
+
+> treating your wrangler.toml file as the source of truth for your Worker configuration
+
 ### Debug
 `console.log()` output is available.  Use the `tail` command in the cli tool.  This also outputs Cloudflare added headers like cf-ipcountry, asn, ray-id, True IP.
 
