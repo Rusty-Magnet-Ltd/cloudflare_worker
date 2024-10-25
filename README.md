@@ -4,6 +4,29 @@
 
 Code powers [foobar.rustymagnet.xyz](https://foobar.rustymagnet.xyz/).
 
+## Learnings
+
+### Testing
+
+Testing requires the `"cloudflare:test"` to get environment variables into `vitest`:
+
+```typescript
+import { env } from "cloudflare:test";
+
+it("/carpark ok", async () => {
+    const res = await app.request("/carpark", {}, env);
+    expect(res.status).toBe(200);
+});
+```
+
+### debug 
+Console logs available using the `tail` command in the cli tool.  This also outputs Cloudflare added headers like cf-ipcountry, asn, ray-id, True IP.
+
+```shell
+# 
+wrangler tail foo
+```
+
 ## Set up
 
 ### Deploy code to Cloudflare Worker
@@ -22,13 +45,7 @@ sequenceDiagram
    CircleCI->>Cloudflare: upload new code with Wrangler cli
 ```
 
-### Debug Console logs
 
-```shell
-# watch console logs
-# also outputs Cloudflare added headers like cf-ipcountry, asn, ray-id, True IP
-wrangler tail foo
-```
 
 ## Design choices
 
