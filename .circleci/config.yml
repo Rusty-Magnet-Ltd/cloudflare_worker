@@ -45,7 +45,8 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/project
-      - run: npx wrangler deploy
+      # pass in environment flag to tell cloudflare what environment to push
+      - run: npx wrangler deploy -e production
 
 workflows:
   test_and_lint:

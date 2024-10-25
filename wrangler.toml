@@ -26,7 +26,6 @@ ENVIRONMENT = "DEVELOPMENT"
 SECURITY_HEADER_NAME = "X-Header"
 ENVIRONMENT = "PRODUCTION"
 
-
 [dev]
 port = 8787
 local_protocol = "http"
