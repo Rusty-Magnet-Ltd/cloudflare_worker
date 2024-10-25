@@ -1,12 +1,10 @@
 import { describe, expect, it } from "vitest";
+import { env } from "cloudflare:test";
 import app from "../src/routes";
 
 describe("test carpark", () => {
   it("/carpark ok", async () => {
-    const carparkReq = new Request("/carpark", {
-      method: "GET"
-    });
-    const res = await app.request(carparkReq);
+    const res = await app.request("/carpark", {}, env);
     expect(res.status).toBe(200);
   });
 });
