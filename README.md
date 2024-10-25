@@ -33,7 +33,9 @@ wrangler tail foo
 ## Design choices
 
 - Started on [itty-router](https://itty.dev/itty-router). But docs and testing was clearer in [Hono](https://hono.dev/guides/examples).
+- The app uses `Grouping` of routers to make it simple to slim down code into discrete files.  Link [here](https://hono.dev/docs/api/routing).
 - Local dev uses a `.dev.vars` file as the normal `.env` file is used by the Worker set up itself.
+- Setting the `ENVIRONMENT` variable needs to be handled; a great article [here](https://www.raulmelo.me/en/blog/best-practices-for-handling-per-environment-config-js-ts-applications)
 - A [Boilerplate](https://github.com/marcosrjjunior/hono-boilerplate/tree/main/src/routes) on structuring project.
 - The JWT work was based these [helpers](https://hono.dev/helpers/jwt).
 - Linter is [tseslint](https://typescript-eslint.io/getting-started). Many wasted hourse debugging until I stripped it back with these [instructions](https://khalilstemmler.com/blogs/typescript/eslint-for-typescript/).

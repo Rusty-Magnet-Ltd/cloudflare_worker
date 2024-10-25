@@ -1,5 +1,6 @@
 import { describe, expect, test, it } from "vitest";
 import { JWTPayload } from "hono/utils/jwt/types";
+import { env } from "cloudflare:test";
 import app from "../src/routes";
 
 test("check JWTPayload instance ok", () => {
@@ -14,7 +15,7 @@ test("check JWTPayload instance ok", () => {
 
 describe("test /generate route", () => {
   it("OK response expect", async () => {
-    const res = await app.request("/generate");
+    const res = await app.request("/generate", {}, env);
     expect(res.status).toBe(201);
   });
 });
