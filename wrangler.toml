@@ -20,11 +20,10 @@ assets = { directory = "./public/static", binding = "ASSETS" }
 [env.testing.vars]
 SECURITY_HEADER_NAME = "X-Header"
 SECRET_KEY = "dummy"
-ENVIRONMENT = "DEVELOPMENT"
+ENVIRONMENT = "TESTING"
 
 [env.production.vars]
 SECURITY_HEADER_NAME = "X-Header"
-ENVIRONMENT = "PRODUCTION"
 
 [dev]
 port = 8787
