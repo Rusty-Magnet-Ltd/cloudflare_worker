@@ -11,6 +11,10 @@ routes = [{ pattern = "foobar.rustymagnet.xyz", custom_domain = true }]
 # serves static folder
 assets = { directory = "./public/static", binding = "ASSETS" }
 
+[env.production.vars]
+SECURITY_HEADER_NAME = "X-Header"
+ENVIRONMENT= "prod"
+
 # wrangler dev --env=testing
 # picks up variables in this section
 # NOTE [vars] is a non-inheritable key so not usuable when using environment specific
@@ -22,9 +26,6 @@ SECURITY_HEADER_NAME = "X-Header"
 SECRET_KEY = "dummy"
 ENVIRONMENT = "TESTING"
 
-[env.production.vars]
-SECURITY_HEADER_NAME = "X-Header-1"
-ENVIRONMENT= "prod"
 
 [dev]
 port = 8787
