@@ -10,7 +10,7 @@ routes = [{ pattern = "foobar.rustymagnet.xyz", custom_domain = true }]
 # serves static folder
 assets = { directory = "./public/static", binding = "ASSETS" }
 
-#get overridden by values in the .devs.vars
+# values overridden in the .devs.vars. Useful default for CI/CD tests.
 [vars]
 SECURITY_HEADER_NAME = "X-Header"
 SECRET_KEY = "dummy"
