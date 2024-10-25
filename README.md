@@ -23,24 +23,16 @@ it("/carpark ok", async () => {
 
 Local code uses a `.dev.vars` to read secret environment variables.  The normal `.env` file is used by Cloudflare code.
 
-### Environment
-
-Environment specific values can be set in the `wrangler.toml` file as below; these can be source controlled safely as these are overridden locally by the .devs.vars ( local tests ) and production secrets.
+Default test values can be set in the `wrangler.toml` file as below; these can be source controlled safely as these are overridden locally by the .devs.vars ( local tests ) and production secrets.
 
 ```yaml
-[env.testing.vars]
-  SECURITY_HEADER_NAME = "X-Header"
-  SECRET_KEY = "dummy"
-  ENVIRONMENT = "TESTING"
+[vars]
+SECURITY_HEADER_NAME = "X-Header"
+SECRET_KEY = "dummy"
+ENVIRONMENT = "DEVELOPMENT"
 ```
 
-The environment setting can be fed to vitest: `wrangler: { configPath: "./wrangler.toml", environment: "testing" }`
-
-### Deploy
-
-Ensure the correct `deploy flag` is set when uploading the Cloudflare `npx wrangler deploy -e prod`.
-
-### Debug
+### debug 
 `console.log()` output is available.  Use the `tail` command in the cli tool.  This also outputs Cloudflare added headers like cf-ipcountry, asn, ray-id, True IP.
 
 ```shell

@@ -21,9 +21,12 @@ assets = { directory = "./public/static", binding = "ASSETS" }
 SECURITY_HEADER_NAME = "X-Header"
 SECRET_KEY = "dummy"
 ENVIRONMENT = "TESTING"
+[env.production]
+SECURITY_HEADER_NAME = "X-Header-1"
 
 [env.production.vars]
-SECURITY_HEADER_NAME = "X-Header"
+ENVIRONMENT= "prod"
+>>>>>>> readme_bump
 
 [dev]
 port = 8787

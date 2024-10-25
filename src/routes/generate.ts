@@ -25,7 +25,6 @@ generate.use(async (c, next) => {
 
   const secret_key = c.env.SECRET_KEY;
   const token = signPayload(payload, secret_key);
-
   c.res.headers.set(c.env.SECURITY_HEADER_NAME, await token);
   await next();
 });
