@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { verify } from "hono/jwt";
 import { validator } from "hono/validator";
-import { JWTPayload } from "hono/utils/jwt/types";
+import { JWTPayload, JwtTokenInvalid } from "hono/utils/jwt/types";
 
 type Bindings = {
   SECURITY_HEADER_NAME: string;
@@ -14,20 +14,23 @@ vrfy.get(
   "/verify",
   validator("header", async (value, c) => {
     const SECURITY_HEADER_NAME = c.env.SECURITY_HEADER_NAME;
-    const tokenToVerify = value[SECURITY_HEADER_NAME.toLowerCase()];
-    if (!tokenToVerify || tokenToVerify.length === 0) {
-      return c.text("Invalid! Either no value or value not a string", 400);
-    }
+    const jwtToVerify = value[SECURITY_HEADER_NAME.toLowerCase()];
+
     try {
       const decodedPayload = (await verify(
-        tokenToVerify,
+        jwtToVerify,
         c.env.SECRET_KEY,
         "HS256"
       )) as JWTPayload;
-      console.log(decodedPayload);
+      console.debug(decodedPayload);
     } catch (error) {
       console.log(`Verify failed.`);
-      if (error instanceof Error) console.error(error.message);
+      if (error instanceof JwtTokenInvalid) {
+        console.log("[!]Invalid JWT.\n"
+          + "\tSECURITY_HEADER_NAME=" + SECURITY_HEADER_NAME + "\n"
+          + "\tJWT=" + jwtToVerify
+        );
+      }
       return c.text("jwt verify failed", 401);
     }
   }),

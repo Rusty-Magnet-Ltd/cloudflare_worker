@@ -8,7 +8,7 @@ Code powers [foobar.rustymagnet.xyz](https://foobar.rustymagnet.xyz/).
 
 ### Testing
 
-Testing requires the `"cloudflare:test"` to get environment variables into `vitest`:
+Testing required `"cloudflare:test"` to access `environment variables` in tests:
 
 ```typescript
 import { env } from "cloudflare:test";
@@ -46,6 +46,19 @@ Cloudflare suggest [here](https://developers.cloudflare.com/workers/wrangler/con
 
 ### Debug
 `console.log()` output is available.  Use the `tail` command in the cli tool.  This also outputs Cloudflare added headers like cf-ipcountry, asn, ray-id, True IP.
+=======
+Local code used `.dev.vars` file to read secrets.  The normal `.env` file was used by Cloudflare code.  Default test values can be set in the `wrangler.toml` file as below; these can be `source controlled` safely as they only for CI/CD tests and don't get deployed to actually workers.  It would be different if the `wranger deploy --env=testing` was used:
+
+```yaml
+[env.testing.vars]
+SECURITY_HEADER_NAME = "X-Header"
+SECRET_KEY = "dummy"
+ENVIRONMENT = "DEVELOPMENT"
+```
+
+### debug 
+
+`console.log()` output was available.  Use the `tail` command in the cli tool.  This also outputs Cloudflare added headers like cf-ipcountry, asn, ray-id, True IP.
 
 ```shell
 wrangler tail foo
@@ -65,7 +78,7 @@ sequenceDiagram
    Engineer->>GitHub: code change
    GitHub->>CircleCI: invoke change
    CircleCI->>CircleCI: set up Cloudflare's Wranger cli tool
-   CircleCI->>CircleCI: Lint, compile, scan, test code
+   CircleCI->>CircleCI: Lint and test code
    CircleCI->>Cloudflare: upload new code with Wrangler cli
 ```
 

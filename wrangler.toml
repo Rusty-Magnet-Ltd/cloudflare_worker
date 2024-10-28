@@ -1,32 +1,28 @@
-name = "foo"
+
 main = "src/routes/index.ts"
 compatibility_date = "2024-08-15"
 compatibility_flags = ["nodejs_compat"]
 
 workers_dev = false
 
-routes = [
-    { pattern = "foobar.rustymagnet.xyz", custom_domain = true }]
-
+[env.production]
+name = "foo"
+routes = [{ pattern = "foobar.rustymagnet.xyz", custom_domain = true }]
 # serves static folder
 assets = { directory = "./public/static", binding = "ASSETS" }
 
-# wrangler dev --env=testing
-# picks up variables in this section
+[env.production.vars]
+SECURITY_HEADER_NAME = "X-Header"
+ENVIRONMENT= "prod"
+
+# `wrangler dev --env=testing` picks up variables in this section
 # NOTE [vars] is a non-inheritable key so not usuable when using environment specific
 # values in the .devs.vars override these values. Useful default for CI/CD tests
-# local test uses .devs.vars file
-# CI/CD uses the values inside [env.testing.vars] ( as no .devs.vars file in source control )
+# local test uses .devs.vars file. CI/CD uses the values inside [env.testing.vars] as no .devs.vars file in source control
 [env.testing.vars]
 SECURITY_HEADER_NAME = "X-Header"
 SECRET_KEY = "dummy"
 ENVIRONMENT = "TESTING"
-
-[env.production]
-SECURITY_HEADER_NAME = "X-Header-1"
-
-[env.production.vars]
-ENVIRONMENT= "prod"
 
 [dev]
 port = 8787
