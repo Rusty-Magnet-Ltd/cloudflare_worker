@@ -39,11 +39,10 @@ The environment setting can be fed to vitest: `wrangler: { configPath: "./wrangl
 ### Deploy
 
 > [!CAUTION]
-> Ensure the correct `deploy flag` is set when uploading the Cloudflare `npx wrangler deploy -e prod`.  Get this wrong and you can override real production secrets.
+> Always set the correct `deploy flag` when uploading the Cloudflare `npx wrangler deploy -e prod`.  Get this wrong and you can override real production secrets.
 
-Cloudflare suggest [here](https://developers.cloudflare.com/workers/wrangler/configuration/):
-
->treating your wrangler.toml file as the source of truth for your Worker configuration
+> [!INFO]
+Cloudflare suggest [here](https://developers.cloudflare.com/workers/wrangler/configuration/) treating your wrangler.toml file as the source of truth for your Worker configuration.
 
 ### Debug
 
