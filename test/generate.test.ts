@@ -2,7 +2,7 @@ import { describe, expect, test, it } from "vitest";
 import { JWTPayload } from "hono/utils/jwt/types";
 import { env } from "cloudflare:test";
 import app from "../src/routes";
-import {signPayload} from "../src/routes/generate";
+import { signPayload } from "../src/routes/generate";
 
 const payload: JWTPayload = {
   sub: "Bob",
@@ -31,8 +31,8 @@ describe("test /generate route", () => {
     const req = new Request("http://localhost:8787/verify", {
       method: "GET",
       headers: {
-        [env.SECURITY_HEADER_NAME]: token,
-      },
+        [env.SECURITY_HEADER_NAME]: token
+      }
     });
     const res = await app.request(req, {}, env);
     expect(res.status).toBe(201);

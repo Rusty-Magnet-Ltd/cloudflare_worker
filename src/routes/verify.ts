@@ -16,7 +16,7 @@ vrfy.get(
     const SECURITY_HEADER_NAME = c.env.SECURITY_HEADER_NAME;
     const tokenToVerify = value[SECURITY_HEADER_NAME.toLowerCase()];
     if (!tokenToVerify || tokenToVerify === "") {
-        console.log(SECURITY_HEADER_NAME);
+      console.log(SECURITY_HEADER_NAME);
       return c.text("Invalid! Either no value or value not a string", 400);
     }
     try {
