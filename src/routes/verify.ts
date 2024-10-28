@@ -22,7 +22,7 @@ vrfy.get(
         c.env.SECRET_KEY,
         "HS256"
       )) as JWTPayload;
-      console.log(decodedPayload);
+      console.debug(decodedPayload);
     } catch (error) {
       console.log(`Verify failed.`);
       if (error instanceof JwtTokenInvalid) {

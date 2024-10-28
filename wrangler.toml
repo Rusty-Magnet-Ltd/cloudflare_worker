@@ -15,12 +15,10 @@ assets = { directory = "./public/static", binding = "ASSETS" }
 SECURITY_HEADER_NAME = "X-Header"
 ENVIRONMENT= "prod"
 
-# wrangler dev --env=testing
-# picks up variables in this section
+# `wrangler dev --env=testing` picks up variables in this section
 # NOTE [vars] is a non-inheritable key so not usuable when using environment specific
 # values in the .devs.vars override these values. Useful default for CI/CD tests
-# local test uses .devs.vars file
-# CI/CD uses the values inside [env.testing.vars] ( as no .devs.vars file in source control )
+# local test uses .devs.vars file. CI/CD uses the values inside [env.testing.vars] as no .devs.vars file in source control
 [env.testing.vars]
 SECURITY_HEADER_NAME = "X-Header"
 SECRET_KEY = "dummy"
