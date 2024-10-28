@@ -38,27 +38,15 @@ The environment setting can be fed to vitest: `wrangler: { configPath: "./wrangl
 
 ### Deploy
 
-Ensure the correct `deploy flag` is set when uploading the Cloudflare `npx wrangler deploy -e prod`.
+> [!CAUTION]
+> Always set the correct `deploy flag` when uploading the Cloudflare `npx wrangler deploy -e prod`.  Get this wrong and you can override real production secrets.
 
-Cloudflare suggest [here](https://developers.cloudflare.com/workers/wrangler/configuration/):
-
-> treating your wrangler.toml file as the source of truth for your Worker configuration
+> [!INFO]
+Cloudflare suggest [here](https://developers.cloudflare.com/workers/wrangler/configuration/) treating your wrangler.toml file as the source of truth for your Worker configuration.
 
 ### Debug
+
 `console.log()` output is available.  Use the `tail` command in the cli tool.  This also outputs Cloudflare added headers like cf-ipcountry, asn, ray-id, True IP.
-=======
-Local code used `.dev.vars` file to read secrets.  The normal `.env` file was used by Cloudflare code.  Default test values can be set in the `wrangler.toml` file as below; these can be `source controlled` safely as they only for CI/CD tests and don't get deployed to actually workers.  It would be different if the `wranger deploy --env=testing` was used:
-
-```yaml
-[env.testing.vars]
-SECURITY_HEADER_NAME = "X-Header"
-SECRET_KEY = "dummy"
-ENVIRONMENT = "DEVELOPMENT"
-```
-
-### debug 
-
-`console.log()` output was available.  Use the `tail` command in the cli tool.  This also outputs Cloudflare added headers like cf-ipcountry, asn, ray-id, True IP.
 
 ```shell
 wrangler tail foo
