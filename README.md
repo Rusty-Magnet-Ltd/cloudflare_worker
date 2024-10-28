@@ -8,7 +8,7 @@ Code powers [foobar.rustymagnet.xyz](https://foobar.rustymagnet.xyz/).
 
 ### Testing
 
-Testing requires the `"cloudflare:test"` to get environment variables into `vitest`:
+Testing required `"cloudflare:test"` to access `environment variables` in tests:
 
 ```typescript
 import { env } from "cloudflare:test";
@@ -21,7 +21,7 @@ it("/carpark ok", async () => {
 
 ### Secrets
 
-Local code uses a `.dev.vars` to read secret environment variables.  The normal `.env` file is used by Cloudflare code.  Default test values can be set in the `wrangler.toml` file as below; these can be `source controlled` safely as they only for CI/CD tests and don't get deployed to actually workers.  It would be different if the `wranger deploy --env=testing` was used:
+Local code used `.dev.vars` file to read secrets.  The normal `.env` file was used by Cloudflare code.  Default test values can be set in the `wrangler.toml` file as below; these can be `source controlled` safely as they only for CI/CD tests and don't get deployed to actually workers.  It would be different if the `wranger deploy --env=testing` was used:
 
 ```yaml
 [env.testing.vars]
@@ -31,7 +31,8 @@ ENVIRONMENT = "DEVELOPMENT"
 ```
 
 ### debug 
-`console.log()` output is available.  Use the `tail` command in the cli tool.  This also outputs Cloudflare added headers like cf-ipcountry, asn, ray-id, True IP.
+
+`console.log()` output was available.  Use the `tail` command in the cli tool.  This also outputs Cloudflare added headers like cf-ipcountry, asn, ray-id, True IP.
 
 ```shell
 wrangler tail foo
