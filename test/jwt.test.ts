@@ -37,4 +37,27 @@ describe("test /generate route", () => {
     const res = await app.request(req, {}, env);
     expect(res.status).toBe(201);
   });
+
+  it("jwt is not a jwt ok", async () => {
+    const junkJWT = "junkNotAJwt";
+    const req = new Request("http://localhost:8787/verify", {
+      method: "GET",
+      headers: {
+        [env.SECURITY_HEADER_NAME]: junkJWT
+      }
+    });
+    const res = await app.request(req, {}, env);
+    expect(res.status).toBe(401);
+  });
+
+  it("empty jwt is not a jwt ok", async () => {
+    const req = new Request("http://localhost:8787/verify", {
+      method: "GET",
+      headers: {
+        [env.SECURITY_HEADER_NAME]: ""
+      }
+    });
+    const res = await app.request(req, {}, env);
+    expect(res.status).toBe(401);
+  });
 });
