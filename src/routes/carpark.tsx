@@ -1,5 +1,9 @@
 import { Hono } from "hono";
 import { env } from "hono/adapter";
+import { Style } from "hono/css";
+import {
+  headerClass
+} from "../constants/css";
 
 interface Bindings {
   ENVIRONMENT: "development" | "production";
@@ -18,10 +22,10 @@ carpark.get("/carpark", (c) => {
   return c.html(
     <html>
       <head>
-        <title>Carpark</title>
+        <Style />
+        <header className={headerClass}>Carpark</header>
       </head>
       <body>
-        Car Park!
         <br />
         <br />
         <img
@@ -31,6 +35,7 @@ carpark.get("/carpark", (c) => {
           height="230"
         />
       </body>
+      <footer></footer>
     </html>
   );
 });
