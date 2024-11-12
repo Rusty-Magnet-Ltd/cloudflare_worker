@@ -1,11 +1,7 @@
 export const features = [
   {
-    title: "hono",
-    description: "Tiny and lightweight routing"
-  },
-  {
-    title: "wrangler",
-    description: "Cloudflare cli tool to deploy Worker"
+    title: "/",
+    description: "A Cloudflare Worker with the Hono http router"
   },
   {
     title: "/generate",
@@ -14,6 +10,14 @@ export const features = [
   {
     title: "/verify",
     description: "No tampering and non-expired JWT"
+  },
+  {
+    title: "/expensive",
+    description: "A Redis based Rate Limit alternative to traditional Cloudflare Rate Limits"
+  },
+  {
+    title: "/workflow",
+    description: "Landing area for requests that trip Firewall Rules"
   },
   {
     title: "/carpark",
