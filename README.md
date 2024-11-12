@@ -52,6 +52,32 @@ Cloudflare suggest [here](https://developers.cloudflare.com/workers/wrangler/con
 wrangler tail foo
 ```
 
+### Workflows
+
+Hono was able to route requests via a local tunnel so they could connect to backend workflow; This used `Upstash` and `QStash`.
+
+> [!CAUTION]
+> This wouldn't work when other software were proxying client connections.
+
+```shell
+# start ngrok
+ngrok http localhost:3001 --log=stdout
+
+# set local environment .dev.vars
+QSTASH_TOKEN="xxxx"
+UPSTASH_WORKFLOW_URL="https://abcd.ngrok-free.app"
+
+# inspect state of requests
+http://localhost:4040/inspect/http
+
+# status of tunnel
+http://localhost:4040/status
+```
+
+
+
+
+
 ## Set up
 
 ### Deploy code to Cloudflare Worker
@@ -72,10 +98,12 @@ sequenceDiagram
 
 
 
+
 ## Design choices
 
-- Started on [itty-router](https://itty.dev/itty-router). But docs and testing was clearer in [Hono](https://hono.dev/guides/examples).
-- The app uses `Grouping` of routers to make it simple to slim down code into discrete files.  Link [here](https://hono.dev/docs/api/routing).
+- Started on [itty-router](https://itty.dev/itty-router). But docs and testing were clearer with [Hono](https://hono.dev/guides/examples).
+- The app used `Grouping` of routers to slim down code into discrete files.  Link [here](https://hono.dev/docs/api/routing).
+- Local dev connects to `ngrox` tunnelling.
 - Setting the `ENVIRONMENT` variable needs to be handled; a great article [here](https://www.raulmelo.me/en/blog/best-practices-for-handling-per-environment-config-js-ts-applications)
 - A [Boilerplate](https://github.com/marcosrjjunior/hono-boilerplate/tree/main/src/routes) on structuring project.
 - The JWT work was based these [helpers](https://hono.dev/helpers/jwt).

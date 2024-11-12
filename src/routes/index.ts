@@ -5,6 +5,7 @@ import generate from "./generate";
 import verify from "./verify";
 import home from "./home";
 import carpark from "./carpark";
+import workflow from "./upstash";
 
 const app = new Hono();
 
@@ -22,5 +23,6 @@ app.route("/", home);
 app.route("/", generate);
 app.route("/", verify);
 app.route("/", carpark);
+app.route("/", workflow);
 
 export default app;
