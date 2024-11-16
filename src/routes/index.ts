@@ -11,9 +11,10 @@ import { rateLimitMiddleware } from "../middleware/ratelimit";
 
 const app = new Hono();
 
+// applies logger and poweredBy to all routes
 app.use(logger());
-app.use("/expensive", rateLimitMiddleware);
 app.use(poweredBy());
+
 app.notFound((c) => {
   return c.text("404 Message", 404);
 });
