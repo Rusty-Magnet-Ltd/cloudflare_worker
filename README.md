@@ -54,7 +54,9 @@ wrangler tail foo
 
 ### Workflows
 
-Hono was able to route requests via a local tunnel so they could connect to backend workflow; This used `Upstash` and `QStash`.
+You could start a backend workflow using a `workflow`; this was written using `QStash` from `Upstash`.  
+
+To test it locally, `ngrok` was used to route all of the Worker requests via ngrok.  So you no longer went to `localhost:8787/carpark`.  Instead you used: `https://abcd.ngrok-free.app/carpark`
 
 > [!CAUTION]
 > This wouldn't work when other software were proxying client connections.
@@ -67,15 +69,10 @@ ngrok http localhost:3001 --log=stdout
 QSTASH_TOKEN="xxxx"
 UPSTASH_WORKFLOW_URL="https://abcd.ngrok-free.app"
 
-# inspect state of requests
+# inspect state of requests or local tunnelling
 http://localhost:4040/inspect/http
-
-# status of tunnel
 http://localhost:4040/status
 ```
-
-
-
 
 
 ## Set up
