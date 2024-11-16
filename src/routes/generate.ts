@@ -1,13 +1,9 @@
 import { Hono } from "hono";
 import { sign } from "hono/jwt";
 import { JWTPayload } from "hono/utils/jwt/types";
+import type { JwtEnv } from "../types/api";
 
-type Bindings = {
-  SECURITY_HEADER_NAME: string;
-  SECRET_KEY: string;
-};
-
-const generate = new Hono<{ Bindings: Bindings }>();
+const generate = new Hono<{ Bindings: JwtEnv }>();
 
 export async function signPayload(payload: JWTPayload, secret: string) {
   return await sign(payload, secret, "HS256");

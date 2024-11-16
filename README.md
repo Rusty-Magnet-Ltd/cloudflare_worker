@@ -8,6 +8,10 @@ Code powers [foobar.rustymagnet.xyz](https://foobar.rustymagnet.xyz/).
 
 ### Testing
 
+> [!CAUTION]
+> Expect hard to debug errors if there are tools on your machine proxying client connections or intercepting DNS queries.
+
+
 Testing required `"cloudflare:test"` to access `environment variables` in tests:
 
 ```typescript
@@ -50,6 +54,18 @@ Cloudflare suggest [here](https://developers.cloudflare.com/workers/wrangler/con
 
 ```shell
 wrangler tail foo
+```
+When errors happened inside a Worker, the output to the console was limited:
+
+```shell
+[ERROR] Uncaught (async) Error: internal error
+```
+
+But the logs helped:
+
+```shell
+Logs were written to "/<home>/.wrangler/logs/wrangler-2024-11-16.log"
+DNS lookup failed.
 ```
 
 ### Workflows

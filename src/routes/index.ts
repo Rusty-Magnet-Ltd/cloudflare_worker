@@ -7,12 +7,12 @@ import home from "./home";
 import carpark from "./carpark";
 import workflow from "./workflow";
 import expensive from "./expensive";
-import {rateLimitMiddleware} from "../middleware/ratelimit";
+import { rateLimitMiddleware } from "../middleware/ratelimit";
 
 const app = new Hono();
 
 app.use(logger());
-app.use('/expensive', rateLimitMiddleware);
+app.use("/expensive", rateLimitMiddleware);
 app.use(poweredBy());
 app.notFound((c) => {
   return c.text("404 Message", 404);
