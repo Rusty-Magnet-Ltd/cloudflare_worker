@@ -8,6 +8,10 @@ Code powers [foobar.rustymagnet.xyz](https://foobar.rustymagnet.xyz/).
 
 ### Testing
 
+> [!CAUTION]
+> Expect hard to debug errors if there are tools on your machine proxying client connections or intercepting DNS queries.
+
+
 Testing required `"cloudflare:test"` to access `environment variables` in tests:
 
 ```typescript
@@ -51,10 +55,24 @@ Cloudflare suggest [here](https://developers.cloudflare.com/workers/wrangler/con
 ```shell
 wrangler tail foo
 ```
+When errors happened inside a Worker, the output to the console was limited:
+
+```shell
+[ERROR] Uncaught (async) Error: internal error
+```
+
+But the logs helped:
+
+```shell
+Logs were written to "/<home>/.wrangler/logs/wrangler-2024-11-16.log"
+DNS lookup failed.
+```
 
 ### Workflows
 
-Hono was able to route requests via a local tunnel so they could connect to backend workflow; This used `Upstash` and `QStash`.
+You could start a backend workflow using a `workflow`; this was written using `QStash` from `Upstash`.  
+
+To test it locally, `ngrok` was used to route all of the Worker requests via ngrok.  So you no longer went to `localhost:8787/carpark`.  Instead you used: `https://abcd.ngrok-free.app/carpark`
 
 > [!CAUTION]
 > This wouldn't work when other software were proxying client connections.
@@ -67,15 +85,10 @@ ngrok http localhost:3001 --log=stdout
 QSTASH_TOKEN="xxxx"
 UPSTASH_WORKFLOW_URL="https://abcd.ngrok-free.app"
 
-# inspect state of requests
+# inspect state of requests or local tunnelling
 http://localhost:4040/inspect/http
-
-# status of tunnel
 http://localhost:4040/status
 ```
-
-
-
 
 
 ## Set up
