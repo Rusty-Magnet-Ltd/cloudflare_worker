@@ -2,13 +2,13 @@ import { describe, expect, test, it } from "vitest";
 import { JWTPayload } from "hono/utils/jwt/types";
 import { env } from "cloudflare:test";
 import app from "../src/routes";
-import { signPayload } from "../src/routes/generate";
+import { SignPayload } from "../src/middleware/addsignedjwt";
 
 const payload: JWTPayload = {
-  sub: "Bob",
-  role: "admin",
-  department: "hr",
-  exp: Math.floor(Date.now() / 1000) + 60 * 5 // Token expires in 5 minutes
+  sub: "Alice",
+  role: "delivery",
+  department: "post",
+  exp: Math.floor(Date.now() / 1000) + 60 * 2 // Token expires in 2 minutes
 };
 
 test("check JWTPayload instance ok", () => {
@@ -21,13 +21,15 @@ describe("test /generate route", () => {
     expect(res.status).toBe(201);
   });
 
-  it("OK response expect", async () => {
+  it("test /generate route provides x-header in response", async () => {
     const res = await app.request("/generate", {}, env);
-    expect(res.status).toBe(201);
+    const xHeader = res.headers.get(env.SECURITY_HEADER_NAME);
+    expect(xHeader).not.toBeNull();
+    expect(xHeader?.length).toBeGreaterThan(1);
   });
 
   it("verify ok", async () => {
-    const token = await signPayload(payload, env.SECRET_KEY);
+    const token = await SignPayload(payload, env.SECRET_KEY);
     const req = new Request("http://localhost:8787/verify", {
       method: "GET",
       headers: {

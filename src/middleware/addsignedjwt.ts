@@ -4,18 +4,20 @@ import type { JwtEnv } from "../types/api";
 import { Context, Next } from "hono";
 import { env } from "hono/adapter";
 
-export async function addSignedJwt(ctx: Context, next: Next) {
+const payload: JWTPayload = {
+  sub: "Bob",
+  role: "admin",
+  department: "hr",
+  exp: Math.floor(Date.now() / 1000) + 60 * 5 // Token expires in 5 minutes
+};
+
+export async function SignPayload(p: JWTPayload, secret: string) {
+  return sign(p, secret, "HS256");
+}
+
+export async function addSignedJwtMiddleware(ctx: Context, next: Next) {
   const { SECRET_KEY, SECURITY_HEADER_NAME } = env<JwtEnv>(ctx);
-
-  const payload: JWTPayload = {
-    sub: "Bob",
-    role: "admin",
-    department: "hr",
-    exp: Math.floor(Date.now() / 1000) + 60 * 5 // Token expires in 5 minutes
-  };
-
-  const token = sign(payload, SECRET_KEY, "HS256");
+  const token = SignPayload(payload, SECRET_KEY);
   ctx.res.headers.set(SECURITY_HEADER_NAME, await token);
-
   await next();
 }

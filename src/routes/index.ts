@@ -7,7 +7,6 @@ import home from "./home";
 import carpark from "./carpark";
 import workflow from "./workflow";
 import expensive from "./expensive";
-import { rateLimitMiddleware } from "../middleware/ratelimit";
 
 const app = new Hono();
 
