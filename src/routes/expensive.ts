@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import type { Env } from "../types/api";
-import {rateLimitMiddleware} from "../middleware/ratelimit";
+import { rateLimitMiddleware } from "../middleware/ratelimit";
 
 const expensive = new Hono<{ Bindings: Env }>();
 

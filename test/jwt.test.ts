@@ -1,9 +1,8 @@
-import {describe, expect, test, it, expectTypeOf} from "vitest";
+import { describe, expect, test, it } from "vitest";
 import { JWTPayload } from "hono/utils/jwt/types";
 import { env } from "cloudflare:test";
 import app from "../src/routes";
 import { SignPayload } from "../src/middleware/addsignedjwt";
-import {x} from "@upstash/redis/zmscore-Dc6Llqgr";
 
 const payload: JWTPayload = {
   sub: "Alice",
