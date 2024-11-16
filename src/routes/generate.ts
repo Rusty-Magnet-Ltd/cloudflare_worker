@@ -1,10 +1,10 @@
 import { Hono } from "hono";
 import type { JwtEnv } from "../types/api";
-import { addSignedJwt } from "../middleware/addsignedjwt";
+import { addSignedJwtMiddleware } from "../middleware/addsignedjwt";
 
 const generate = new Hono<{ Bindings: JwtEnv }>();
 
-generate.get("/generate", addSignedJwt, (c) => {
+generate.get("/generate", addSignedJwtMiddleware, (c) => {
   return c.body("thanks for visiting", 201, {
     "Content-Type": "text/plain"
   });
