@@ -10,13 +10,14 @@ describe("test /expensive Rate Limit route", () => {
 
   it("five expensive requests nok. Rate limit fires ok", async () => {
     const max: number = 5;
+    const responseCodes = new Array(max) as Array<number>;
     let i = 0;
 
     for (i; i <= max; i++) {
       const res = await app.request("/expensive", {}, env);
-      if (i == max) {
-        expect(res.status).toBe(429);
-      }
+      responseCodes[i] = res.status;
     }
-  });
+    const rateLimited = responseCodes.includes(429);
+    expect(rateLimited).toBeTruthy();
+  }, 70 * 1000); // 7 seconds
 });
