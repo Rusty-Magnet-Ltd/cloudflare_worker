@@ -8,7 +8,9 @@ const payload: JWTPayload = {
   sub: "Bob",
   role: "admin",
   department: "hr",
-  exp: Math.floor(Date.now() / 1000) + 60 * 5 // Token expires in 5 minutes
+  exp: Math.floor(Date.now() / 1000) + 60 * 5, // Token expires in 5 minutes
+  iat: Math.floor(Date.now() / 1000),
+  nbf: Math.floor(Date.now() / 1000)
 };
 
 export async function SignPayload(p: JWTPayload, secret: string) {
