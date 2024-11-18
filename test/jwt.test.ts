@@ -52,7 +52,7 @@ describe("test /generate route", () => {
     expect(res.status).toBe(401);
   });
 
-  it("empty jwt is not a jwt ok", async () => {
+  it("empty jwt returns a http 400", async () => {
     const req = new Request("http://localhost:8787/verify", {
       method: "GET",
       headers: {
@@ -60,6 +60,6 @@ describe("test /generate route", () => {
       }
     });
     const res = await app.request(req, {}, env);
-    expect(res.status).toBe(401);
+    expect(res.status).toBe(400);
   });
 });
