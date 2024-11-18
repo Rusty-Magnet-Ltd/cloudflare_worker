@@ -6,6 +6,19 @@ Code powers [foobar.rustymagnet.xyz](https://foobar.rustymagnet.xyz/).
 
 ## Learnings
 
+### Time
+
+Careful using `Date` outside a `route`.  Your dev machine will work as expected but the Cloudflare Worker won't.
+
+```typescript
+let epochDatee = Date.now();  // always zero / `1970-01-01` 
+
+addEventListener("fetch", event => {
+    let localDate = Date.now(); // expected time and date
+})
+```
+
+
 ### Testing
 
 > [!CAUTION]
