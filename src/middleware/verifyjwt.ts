@@ -13,10 +13,9 @@ export async function VerifyPayload(payload: string | undefined, secret: string)
 
 export async function verifyJwtMiddleware(ctx: Context, next: Next) {
   const { SECRET_KEY, SECURITY_HEADER_NAME } = env<JwtEnv>(ctx);
-  // todo: remove the request get here
+  // todo: remove the optional string here
   const jwtToVerify = ctx.req.header(SECURITY_HEADER_NAME.toLowerCase());
   try {
-    console.log("JWT CHECK");
     const decodedPayload = await VerifyPayload(jwtToVerify, SECRET_KEY);
     console.debug(decodedPayload);
   } catch (error) {

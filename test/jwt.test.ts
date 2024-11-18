@@ -28,7 +28,7 @@ describe("test /generate route", () => {
     expect(xHeader?.length).toBeGreaterThan(1);
   });
 
-  it("verify ok", async () => {
+  it("verify ok with test generated jwt", async () => {
     const token = await SignPayload(payload, env.SECRET_KEY);
     const req = new Request("http://localhost:8787/verify", {
       method: "GET",
@@ -40,7 +40,7 @@ describe("test /generate route", () => {
     expect(res.status).toBe(200);
   });
 
-  it("jwt is not a jwt ok", async () => {
+  it("test junk jwt returns nok from jwt verify middleware", async () => {
     const junkJWT = "junkNotAJwt";
     const req = new Request("http://localhost:8787/verify", {
       method: "GET",
@@ -52,7 +52,7 @@ describe("test /generate route", () => {
     expect(res.status).toBe(401);
   });
 
-  it("empty jwt returns a http 400", async () => {
+  it("nil jwt header returns a http 400", async () => {
     const req = new Request("http://localhost:8787/verify", {
       method: "GET",
       headers: {
@@ -61,5 +61,18 @@ describe("test /generate route", () => {
     });
     const res = await app.request(req, {}, env);
     expect(res.status).toBe(400);
+  });
+
+  it("end 2 end test /generate and then /verify OK", async () => {
+    const resp = await app.request("/generate", {}, env);
+    const xHeader = resp.headers.get(env.SECURITY_HEADER_NAME);
+    const req = new Request("http://localhost:8787/verify", {
+      method: "GET",
+      headers: {
+        [env.SECURITY_HEADER_NAME]: xHeader
+      }
+    });
+    const res = await app.request(req, {}, env);
+    expect(res.status).toBe(200);
   });
 });
