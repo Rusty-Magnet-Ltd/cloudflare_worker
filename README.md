@@ -4,6 +4,24 @@
 
 Code powers [foobar.rustymagnet.xyz](https://foobar.rustymagnet.xyz/).
 
+<!-- TOC -->
+
+- [Cloudflare Worker](#cloudflare-worker)
+- [Learnings](#learnings)
+    - [Time](#time)
+    - [Testing](#testing)
+    - [Secrets](#secrets)
+    - [Environment](#environment)
+    - [Deploy](#deploy)
+    - [Debug](#debug)
+    - [Workflows](#workflows)
+- [Architecture](#architecture)
+    - [End-2-End deployment workflow](#end-2-end-deployment-workflow)
+    - [Design choices](#design-choices)
+
+<!-- /TOC -->
+
+
 ## Learnings
 
 ### Time
@@ -104,9 +122,9 @@ http://localhost:4040/status
 ```
 
 
-## Set up
+## Architecture
 
-### Deploy code to Cloudflare Worker
+### End-2-End deployment workflow
 
 ```mermaid
 sequenceDiagram
@@ -116,16 +134,14 @@ sequenceDiagram
    participant CircleCI
    participant Cloudflare
    Engineer->>GitHub: code change
-   GitHub->>CircleCI: invoke change
+   GitHub->>CircleCI: assess change before deploying
    CircleCI->>CircleCI: set up Cloudflare's Wranger cli tool
-   CircleCI->>CircleCI: Lint and test code
-   CircleCI->>Cloudflare: upload new code with Wrangler cli
+   CircleCI->>CircleCI: Lint code
+   CircleCI->>CircleCI: Test code 
+   CircleCI->>Cloudflare: Wrangler cli uploads code change to Cloudflare with the deploy flag
 ```
 
-
-
-
-## Design choices
+### Design choices
 
 - Started on [itty-router](https://itty.dev/itty-router). But docs and testing were clearer with [Hono](https://hono.dev/guides/examples).
 - The app used `Grouping` of routers to slim down code into discrete files.  Link [here](https://hono.dev/docs/api/routing).
