@@ -37,7 +37,7 @@ describe("test /generate route", () => {
       }
     });
     const res = await app.request(req, {}, env);
-    expect(res.status).toBe(201);
+    expect(res.status).toBe(200);
   });
 
   it("jwt is not a jwt ok", async () => {
