@@ -2,7 +2,8 @@ import { describe, expect, it } from "vitest";
 import { JWTPayload } from "hono/utils/jwt/types";
 import { env } from "cloudflare:test";
 import app from "../src/routes";
-import { employeePayload, SignPayload } from "../src/middleware/addsignedjwt";
+import { SignPayload } from "../src/middleware/addsignedjwt";
+import { employeePayload } from "../src/constants/jwtemployee";
 
 const payload: JWTPayload = {
   sub: "Alice",
@@ -36,7 +37,6 @@ describe("test /generate route", () => {
 
   it("verify ok with mock payload", async () => {
     const token = await SignPayload(payload, env.SECRET_KEY);
-    console.log(token);
     const req = new Request("http://localhost:8787/verify", {
       method: "GET",
       headers: {
