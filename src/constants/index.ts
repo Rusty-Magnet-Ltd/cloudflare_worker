@@ -17,7 +17,7 @@ export const features = [
   },
   {
     title: "/workflow",
-    description: "Landing area for requests that trip Firewall Rules"
+    description: "Start a server side task"
   },
   {
     title: "/carpark",

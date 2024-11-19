@@ -1,6 +1,6 @@
 import { sign } from "hono/jwt";
 import { JWTPayload } from "hono/utils/jwt/types";
-import type { JwtEnv } from "../types/api";
+import type { JwtEnv } from "../types/jwt";
 import { Context, Next } from "hono";
 import { env } from "hono/adapter";
 import { NewJwtPayload } from "../model/jwtpayload";

@@ -1,6 +1,6 @@
 import { Context, Next } from "hono";
 import { env } from "hono/adapter";
-import type { JwtEnv } from "../types/api";
+import type { JwtEnv } from "../types/jwt";
 
 export async function jwtHeaderPresentCheck(ctx: Context, next: Next) {
   const { SECURITY_HEADER_NAME } = env<JwtEnv>(ctx);
