@@ -14,11 +14,11 @@ export async function VerifyPayload(payload: string, secret: string, signing_alg
 
 export async function verifyJwtMiddleware(ctx: Context, next: Next) {
   const { SECRET_KEY, SECURITY_HEADER_NAME, SIGNING_ALGORITHM } = env<JwtEnv>(ctx);
-
   const jwtToVerify = ctx.req.header(SECURITY_HEADER_NAME.toLowerCase());
-  if (!jwtToVerify) {
-    return ctx.text("missing jwt", 400); // failsafe if other middleware turned off
+  if (!jwtToVerify || jwtToVerify === "") {
+    return ctx.text("jwt header required", 400);
   }
+
   try {
     const decodedPayload = await VerifyPayload(jwtToVerify, SECRET_KEY, SIGNING_ALGORITHM);
     console.debug(decodedPayload);
