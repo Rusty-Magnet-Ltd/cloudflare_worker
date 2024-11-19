@@ -13,6 +13,7 @@ assets = { directory = "./public/static", binding = "ASSETS" }
 
 [env.production.vars]
 SECURITY_HEADER_NAME = "X-Header"
+SIGNING_ALGORITHM = "HS256"
 ENVIRONMENT= "prod"
 
 # `wrangler dev --env=testing` picks up variables in this section
@@ -22,6 +23,7 @@ ENVIRONMENT= "prod"
 [env.testing.vars]
 SECURITY_HEADER_NAME = "X-Header"
 SECRET_KEY = "dummy"
+SIGNING_ALGORITHM = "HS256"
 ENVIRONMENT = "TESTING"
 
 [dev]
