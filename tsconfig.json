@@ -11,7 +11,9 @@
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
      "noEmit": true, // ensure that nobody can accidentally use this config for a build
-    "sourceMap": false //
+    "sourceMap": false,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
   },
 
   "watchOptions": {
