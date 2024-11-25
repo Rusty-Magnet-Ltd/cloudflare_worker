@@ -12,6 +12,10 @@ export const features = [
     description: "No tampering and non-expired JWT"
   },
   {
+    title: "/dosbody",
+    description: "A POST request that trips if you send 50kb >"
+  },
+  {
     title: "/expensive",
     description: "A Redis based Rate Limit alternative to traditional Cloudflare Rate Limits"
   },

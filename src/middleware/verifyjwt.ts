@@ -20,8 +20,7 @@ export async function verifyJwtMiddleware(ctx: Context, next: Next) {
   }
 
   try {
-    const decodedPayload = await VerifyPayload(jwtToVerify, SECRET_KEY, SIGNING_ALGORITHM);
-    console.debug(decodedPayload);
+    await VerifyPayload(jwtToVerify, SECRET_KEY, SIGNING_ALGORITHM);
   } catch (error) {
     console.log(`[!]verify JWT failed ` + error);
     return ctx.text("jwt verify failed", 401);
