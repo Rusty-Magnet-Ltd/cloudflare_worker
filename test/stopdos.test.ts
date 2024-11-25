@@ -12,7 +12,7 @@ interface MockUser {
 
 const MAX = 150;
 const mockUsers = Array<MockUser>();
-const mockText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. ";
+const mockText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
 
 function initMockUser(user: MockUser): { name: string; language: string; id: string; bio: string; version: number } {
   user.language = "en-US";
@@ -30,19 +30,34 @@ for (let i = 0; i < MAX; i++) {
 const mockJsonBody: string = JSON.stringify(mockUsers);
 
 describe("test /stopdos features work as expected", () => {
-  it("check dummy data ok", () => {
+  it("check mock data ok", () => {
     expect(mockJsonBody).toBeDefined();
     expect(mockJsonBody.length).toBeGreaterThan(50 * 1024); // 50kb
   });
+  it("check mock data can parse json string to object ok", () => {
+    JSON.parse(mockJsonBody);
+  });
 
-  it("verify /stopdos returns 413 with mock payload", async () => {
+  it("verify /stopdos returns 200 ok", async () => {
     const res = await app.request("/stopdos", {
       method: "POST",
       body: JSON.stringify({ message: "hello hono" }),
       headers: new Headers({ "Content-Type": "application/json" })
     });
-
+    expect(res.status).toBe(200);
     expect(await res.json()).toContain("passed");
+  });
+
+  it("verify /stopdos returns 413 ok", async () => {
+    const res = await app.request("/stopdos", {
+      method: "POST",
+      headers: new Headers({
+        "Content-Type": "application/json"
+      }),
+      body: mockJsonBody
+    });
+
     expect(res.status).toBe(413);
+    expect(await res.json()).not.toContain("passed");
   });
 });

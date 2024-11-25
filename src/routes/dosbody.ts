@@ -12,11 +12,8 @@ stopDos.post(
     }
   }),
   async (c) => {
-    const body = await c.req.parseBody();
-    if (body["file"] instanceof File) {
-      console.log(`Got file sized: ${body["file"].size}`);
-    }
-    console.log(body);
+    // const body = await c.req.json();
+    // console.log(body);
     return c.json(JSON.stringify({ message: "passed" }), 200, {
       "Content-Type": "application/json"
     });
