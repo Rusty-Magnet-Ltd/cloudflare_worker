@@ -8,6 +8,7 @@ import carpark from "./carpark";
 import workflow from "./workflow";
 import expensive from "./expensive";
 import stopDos from "./dosbody";
+import contentLen from "./content_len";
 
 const app = new Hono();
 
@@ -30,5 +31,6 @@ app.route("/", carpark);
 app.route("/", workflow);
 app.route("/", expensive);
 app.route("/", stopDos);
+app.route("/", contentLen);
 
 export default app;
