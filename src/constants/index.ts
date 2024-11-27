@@ -16,6 +16,10 @@ export const features = [
     description: "A POST request that trips if you send 50kb >"
   },
   {
+    title: "/content",
+    description: "A GET request that checks the content-length VS whatever the client sent"
+  },
+  {
     title: "/expensive",
     description: "A Redis based Rate Limit alternative to traditional Cloudflare Rate Limits"
   },

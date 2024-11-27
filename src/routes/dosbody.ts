@@ -12,8 +12,9 @@ stopDos.post(
     }
   }),
   async (c) => {
-    // const body = await c.req.json();
-    // console.log(body);
+
+    // const jsonBody = await c.req.json();
+    // console.log(jsonBody);
     return c.json(JSON.stringify({ message: "passed" }), 200, {
       "Content-Type": "application/json"
     });
