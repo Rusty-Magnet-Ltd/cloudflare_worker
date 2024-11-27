@@ -21,7 +21,7 @@ function initMockUser(user: MockUser): { name: string; language: string; id: str
     id: uuidv4(),
     bio: mockText.repeat(5),
     version: Math.floor(Math.random() * 100)
-  }
+  };
 }
 
 for (let i = 0; i < MAX; i++) {
