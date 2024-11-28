@@ -50,17 +50,38 @@ describe("test /stopdos features work as expected", () => {
     console.log(await res.text());
   });
 
-  /* this test will fails; why ?  */
-  // it("verify /stopdos returns 413 ok", async () => {
-  //   const res = await app.request("/stopdos", {
-  //     method: "POST",
-  //     headers: new Headers({
-  //       "Content-Type": "application/json"
-  //     }),
-  //     body: mockJsonBody
-  //   });
-  //
-  //   expect(res.status).toBe(413);
-  //   expect(await res.json()).not.toContain("passed");
-  // });
+  it("verify /stopdos returns 413 ok", async () => {
+    const res = await app.request("/stopdos", {
+      method: "POST",
+      body: JSON.stringify({ hel: "lo world" }),
+      headers: new Headers({ "Content-Type": "application/json" })
+    });
+    expect(res.status).toBe(413);
+    console.log(await res.text());
+  });
+
+  it("verify /stopdos 413 with plaintext request ok", async () => {
+    const res = await app.request("/stopdos", {
+      method: "POST",
+      body: "abcdef0123456789",
+      headers: new Headers({ "Content-Type": "text/plain" })
+    });
+    expect(res.status).toBe(413);
+    console.log(await res.text());
+  });
+
+  it("verify /stopdos with incorrect content-length doesn't parse entire request body ok", async () => {
+    const size = 4;
+    const res = await app.request("/stopdos", {
+      method: "POST",
+      body: "abcdef0123456789",
+      headers: new Headers({
+        "Content-Type": "text/plain",
+        "Content-Length": `${size}`
+      })
+    });
+    expect(res.status).toBe(200);
+    const receivedText = await res.text();
+    expect(receivedText.length).toEqual(size);
+  });
 });
