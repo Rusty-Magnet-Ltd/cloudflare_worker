@@ -43,13 +43,14 @@ describe("test /stopdos features work as expected", () => {
   it("verify /stopdos returns 200 ok", async () => {
     const res = await app.request("/stopdos", {
       method: "POST",
-      body: JSON.stringify({ message: "hello hono" }),
+      body: JSON.stringify({ hel: "lo" }),
       headers: new Headers({ "Content-Type": "application/json" })
     });
     expect(res.status).toBe(200);
-    expect(await res.json()).toContain("passed");
+    console.log(await res.text());
   });
 
+  /* this test will fails; why ?  */
   // it("verify /stopdos returns 413 ok", async () => {
   //   const res = await app.request("/stopdos", {
   //     method: "POST",

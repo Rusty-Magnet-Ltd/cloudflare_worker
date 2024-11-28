@@ -2,21 +2,19 @@ import { Hono } from "hono";
 import { bodyLimit } from "hono/body-limit";
 
 const stopDos = new Hono();
+const maxReqBytes: number = 20; // bytes
 
 stopDos.post(
   "/stopdos",
   bodyLimit({
-    maxSize: 50 * 1024, // 50kb
+    maxSize: maxReqBytes,
     onError: (c) => {
       return c.text("Body request too large", 413);
     }
   }),
   async (c) => {
-    // const jsonBody = await c.req.json();
-    // console.log(jsonBody);
-    return c.json(JSON.stringify({ message: "passed" }), 200, {
-      "Content-Type": "application/json"
-    });
+    const raw = await c.req.raw.text();
+    return c.text("received: " + raw);
   });
 
 export default stopDos;
