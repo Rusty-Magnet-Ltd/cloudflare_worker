@@ -50,6 +50,7 @@ describe("test /stopdos features work as expected", () => {
     expect(await res.json()).toContain("passed");
   });
 
+  /* this test will fails; why ?  */
   // it("verify /stopdos returns 413 ok", async () => {
   //   const res = await app.request("/stopdos", {
   //     method: "POST",

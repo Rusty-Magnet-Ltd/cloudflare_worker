@@ -36,12 +36,15 @@ addEventListener("fetch", event => {
 })
 ```
 
-
 ### Testing
+
+#### Proxy
 
 > [!CAUTION]
 > Expect hard to debug errors if there are tools on your machine proxying client connections or intercepting DNS queries.
 
+
+#### Environment Variables
 
 Testing required `"cloudflare:test"` to access `environment variables` in tests:
 
@@ -54,11 +57,13 @@ it("/carpark ok", async () => {
 });
 ```
 
-### Secrets
+#### Secrets
 
 Local code uses a `.dev.vars` to read secret environment variables.  The normal `.env` file is used by Cloudflare code.
 
 ### Environment
+
+#### Where
 
 Environment specific values can be set in the `wrangler.toml` file as below; these can be source controlled safely as these are overridden locally by the .devs.vars ( local tests ) and production secrets.
 
@@ -69,9 +74,11 @@ Environment specific values can be set in the `wrangler.toml` file as below; the
   ENVIRONMENT = "TESTING"
 ```
 
+#### Pass environment to tests
+
 The environment setting can be fed to vitest: `wrangler: { configPath: "./wrangler.toml", environment: "testing" }`
 
-### Deploy
+#### Deploy
 
 > [!CAUTION]
 > Always set the correct `deploy flag` when uploading the Cloudflare `npx wrangler deploy -e prod`.  Get this wrong and you can override real production secrets.
@@ -81,11 +88,17 @@ Cloudflare suggest [here](https://developers.cloudflare.com/workers/wrangler/con
 
 ### Debug
 
+#### tail
+
 `console.log()` output is available.  Use the `tail` command in the cli tool.  This also outputs Cloudflare added headers like cf-ipcountry, asn, ray-id, True IP.
 
 ```shell
 wrangler tail foo
+
 ```
+
+#### logs
+
 When errors happened inside a Worker, the output to the console was limited:
 
 ```shell

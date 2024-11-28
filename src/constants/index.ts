@@ -1,34 +1,34 @@
 export const features = [
   {
     title: "/",
-    description: "A Cloudflare Worker with the Hono http router"
+    description: "A Cloudflare Worker with Hono"
   },
   {
     title: "/generate",
-    description: "create a signed JWT"
+    description: "GET a signed Json Web Token ( JWT )"
   },
   {
     title: "/verify",
-    description: "No tampering and non-expired JWT"
+    description: "GET check JWT in good standing"
   },
   {
     title: "/dosbody",
-    description: "A POST request that trips if you send 50kb >"
+    description: "POST request that trips if you send 5> bytes"
   },
   {
     title: "/content",
-    description: "A GET request that checks the content-length VS whatever the client sent"
+    description: "POST request that checks the content-length VS whatever the client sent"
   },
   {
     title: "/expensive",
-    description: "A Redis based Rate Limit alternative to traditional Cloudflare Rate Limits"
+    description: "GET that triggers a Redis based Rate Limit alternative to traditional Cloudflare Rate Limits"
   },
   {
     title: "/workflow",
-    description: "Start a server side task"
+    description: "GET start a server side task"
   },
   {
     title: "/carpark",
-    description: "Landing area for requests that trip Firewall Rules"
+    description: "GET a Waiting Room"
   }
 ];
