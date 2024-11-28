@@ -38,6 +38,11 @@ addEventListener("fetch", event => {
 
 ### Testing
 
+#### Vitest Version
+
+Still, Cloudflare tests only worked with `"vitest": "^2.0.5"` as written [here](https://developers.cloudflare.com/workers/testing/vitest-integration/get-started/write-your-first-test/
+).  If you upgraded, all the tests failed.
+
 #### Proxy
 
 > [!CAUTION]
