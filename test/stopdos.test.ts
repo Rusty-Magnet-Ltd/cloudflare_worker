@@ -43,8 +43,8 @@ describe("test /stopdos features work as expected", () => {
   it("verify /stopdos returns 200 ok", async () => {
     const res = await app.request("/stopdos", {
       method: "POST",
-      body: JSON.stringify({ hel: "lo" }),
-      headers: new Headers({ "Content-Type": "application/json" })
+      body: "abcdef",
+      headers: new Headers({ "Content-Type": "text/plain" })
     });
     expect(res.status).toBe(200);
     console.log(await res.text());
