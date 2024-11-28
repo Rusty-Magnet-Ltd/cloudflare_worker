@@ -43,6 +43,10 @@ addEventListener("fetch", event => {
 Still, Cloudflare tests only worked with `"vitest": "^2.0.5"` as written [here](https://developers.cloudflare.com/workers/testing/vitest-integration/get-started/write-your-first-test/
 ).  If you upgraded, all the tests failed.
 
+The lock file will get out of sync if you don't use the `--save-exact`:
+
+`npm install vitest@2.0.5 --save-dev --save-exact`
+
 #### Proxy
 
 > [!CAUTION]
