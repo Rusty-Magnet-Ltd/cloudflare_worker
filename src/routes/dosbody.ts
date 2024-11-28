@@ -2,7 +2,7 @@ import { Hono } from "hono";
 import { bodyLimit } from "hono/body-limit";
 
 const stopDos = new Hono();
-const maxReqBytes: number = 5; // bytes. 50 * 1024 == 50kb
+const maxReqBytes: number = 5; // bytes
 
 stopDos.post(
   "/stopdos",
@@ -13,10 +13,7 @@ stopDos.post(
     }
   }),
   async (c) => {
-
-    const contentLength = parseInt(c.req.raw.headers.get("content-length") || "0", 10);
-    console.log("length:" + contentLength);
-    return c.text("passed", 200);
+    c.text("received: " + await c.req.raw.text());
   });
 
 export default stopDos;

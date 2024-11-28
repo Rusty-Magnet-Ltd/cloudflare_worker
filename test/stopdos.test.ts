@@ -47,7 +47,7 @@ describe("test /stopdos features work as expected", () => {
       headers: new Headers({ "Content-Type": "application/json" })
     });
     expect(res.status).toBe(200);
-    expect(await res.json()).toContain("passed");
+    expect(await res.json()).toContain("received");
   });
 
   /* this test will fails; why ?  */
