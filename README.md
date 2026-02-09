@@ -8,16 +8,23 @@ Code powers [foobar.rustymagnet.xyz](https://foobar.rustymagnet.xyz/).
 
 - [Cloudflare Worker](#cloudflare-worker)
 - [Learnings](#learnings)
-    - [Time](#time)
-    - [Testing](#testing)
+  - [Time](#time)
+  - [Testing](#testing)
+    - [Vitest Version](#vitest-version)
+    - [Proxy](#proxy)
+    - [Environment Variables](#environment-variables)
     - [Secrets](#secrets)
-    - [Environment](#environment)
+  - [Environment](#environment)
+    - [Where](#where)
+    - [Pass environment to tests](#pass-environment-to-tests)
     - [Deploy](#deploy)
-    - [Debug](#debug)
-    - [Workflows](#workflows)
+  - [Debug](#debug)
+    - [tail](#tail)
+    - [logs](#logs)
+  - [Workflows](#workflows)
 - [Architecture](#architecture)
-    - [End-2-End deployment workflow](#end-2-end-deployment-workflow)
-    - [Design choices](#design-choices)
+  - [End-2-End deployment workflow](#end-2-end-deployment-workflow)
+  - [Design choices](#design-choices)
 
 <!-- /TOC -->
 
@@ -68,7 +75,7 @@ it("/carpark ok", async () => {
 
 #### Secrets
 
-Local code uses a `.dev.vars` to read secret environment variables.  The normal `.env` file is used by Cloudflare code.
+Local code uses a file named `.dev.vars` to read secret environment variables.  The normal `.env` file is used by Cloudflare code.
 
 ### Environment
 
@@ -158,9 +165,9 @@ sequenceDiagram
    Engineer->>GitHub: code change
    GitHub->>CircleCI: assess change before deploying
    CircleCI->>CircleCI: set up Cloudflare's Wranger cli tool
-   CircleCI->>CircleCI: Lint code
-   CircleCI->>CircleCI: Test code 
-   CircleCI->>Cloudflare: Wrangler cli uploads code change to Cloudflare with the deploy flag
+   CircleCI->>CircleCI: Lint & test code
+   CircleCI->>CircleCI: Check if Master branch 
+   CircleCI->>Cloudflare: Wrangler cli uploads change to Cloudflare based on the deploy flag
 ```
 
 ### Design choices
