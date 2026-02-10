@@ -3,6 +3,9 @@
 # Cloudflare workers can't use a dotenv environment variable files as this is used by Cloudflare
 .dev.vars
 
+# Webstorm excludes
+.idea/
+
 # Logs
 ngrok.log
 logs
