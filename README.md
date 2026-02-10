@@ -67,14 +67,22 @@ addEventListener("fetch", event => {
 
 #### Vitest Version
 
-Still, Cloudflare tests only worked with `"vitest": "^2.0.5"` as written [here](https://developers.cloudflare.com/workers/testing/vitest-integration/get-started/write-your-first-test/
-).  If you upgraded, all the tests failed.
+Cloudflare is often Major versions behind in `vitest`.  You cannot just upgrade.
 
-The lock file will get out of sync if you don't use the `--save-exact`:
+```shell
+npm view @cloudflare/vitest-pool-workers@0.12.11 peerDependencies
+{
+  '@vitest/runner': '2.0.x - 3.2.x',
+  '@vitest/snapshot': '2.0.x - 3.2.x',
+  vitest: '2.0.x - 3.2.x'
+}
 
-`npm install vitest@2.0.5 --save-dev --save-exact`
+# to stop all fo the errors use the `--save-exact`:
+npm i -D vitest@~3.2.0 @cloudflare/vitest-pool-workers --save-exact
 
-`npm i -D vitest@~3.2.0 @cloudflare/vitest-pool-workers --save-exact`
+```
+A written [here](https://developers.cloudflare.com/workers/testing/vitest-integration/get-started/write-your-first-test/).  If you upgraded, all the tests failed.
+
 
 #### Proxy
 

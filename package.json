@@ -12,17 +12,13 @@
     "test-coverage": "vitest run --coverage"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "0.12.10",
-    "@eslint/eslintrc": "^3.3.3",
+    "@cloudflare/vitest-pool-workers": "^0.12.11",
     "@eslint/js": "^9.39.2",
-    "@stylistic/eslint-plugin": "^5.8.0",
     "@types/eslint__js": "^9.14.0",
-    "@typescript-eslint/utils": "^8.55.0",
     "eslint": "^9.39.2",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.55.0",
-    "uuid": "^13.0.0",
-    "vitest": "3.2.4"
+    "vitest": "^3.2.4"
   },
   "dependencies": {
     "@upstash/ratelimit": "^2.0.8",
@@ -30,6 +26,7 @@
     "@upstash/workflow": "^1.1.0",
     "hono": "^4.11.9",
     "itty-router": "^5.0.22",
+    "uuid": "^13.0.0",
     "wrangler": "^4.64.0"
   }
 }
