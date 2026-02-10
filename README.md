@@ -29,6 +29,26 @@ Code powers [foobar.rustymagnet.xyz](https://foobar.rustymagnet.xyz/).
 <!-- /TOC -->
 
 
+## Set up
+
+### End-2-End deployment workflow
+
+```mermaid
+sequenceDiagram
+
+   participant Engineer
+   participant GitHub
+   participant CircleCI
+   participant Cloudflare
+   Engineer->>GitHub: code change
+   GitHub->>CircleCI: assess change before deploying
+   CircleCI->>CircleCI: set up Cloudflare's Wranger cli tool
+   CircleCI->>CircleCI: Lint & test code
+   CircleCI->>CircleCI: Check if Master branch 
+   CircleCI->>Cloudflare: Wrangler cli uploads change to Cloudflare based on the deploy flag
+```
+
+
 ## Learnings
 
 ### Time
@@ -53,6 +73,8 @@ Still, Cloudflare tests only worked with `"vitest": "^2.0.5"` as written [here](
 The lock file will get out of sync if you don't use the `--save-exact`:
 
 `npm install vitest@2.0.5 --save-dev --save-exact`
+
+`npm i -D vitest@~3.2.0 @cloudflare/vitest-pool-workers --save-exact`
 
 #### Proxy
 
@@ -150,25 +172,6 @@ http://localhost:4040/inspect/http
 http://localhost:4040/status
 ```
 
-
-## Architecture
-
-### End-2-End deployment workflow
-
-```mermaid
-sequenceDiagram
-
-   participant Engineer
-   participant GitHub
-   participant CircleCI
-   participant Cloudflare
-   Engineer->>GitHub: code change
-   GitHub->>CircleCI: assess change before deploying
-   CircleCI->>CircleCI: set up Cloudflare's Wranger cli tool
-   CircleCI->>CircleCI: Lint & test code
-   CircleCI->>CircleCI: Check if Master branch 
-   CircleCI->>Cloudflare: Wrangler cli uploads change to Cloudflare based on the deploy flag
-```
 
 ### Design choices
 

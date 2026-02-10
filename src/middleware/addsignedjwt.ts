@@ -5,9 +5,9 @@ import { Context, Next } from "hono";
 import { env } from "hono/adapter";
 import { NewJwtPayload } from "../model/jwtpayload";
 
-export async function SignPayload(p: JWTPayload, secret: string) {
-  console.log("Payload for signing:\n", p);
-  return sign(p, secret, "HS256");
+export async function SignPayload(payload: JWTPayload, secret: string) {
+  console.log("Payload for signing:\n", payload);
+  return sign(payload, secret, "HS256");
 }
 
 export async function addSignedJwtMiddleware(ctx: Context, next: Next) {
