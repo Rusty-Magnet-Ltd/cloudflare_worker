@@ -1,8 +1,8 @@
 import { verify } from "hono/jwt";
 import { Context, Next } from "hono";
 import { env } from "hono/adapter";
-import type { JwtEnv } from "../types/api";
 import type { SignatureAlgorithm } from "hono/utils/jwt/jwa";
+import {JwtEnv} from "../types/jwt";
 
 export async function VerifyPayload(payload: string, secret: string, signing_alg: SignatureAlgorithm) {
   return await verify(

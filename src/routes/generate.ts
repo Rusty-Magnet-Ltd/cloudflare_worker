@@ -1,6 +1,6 @@
 import { Hono } from "hono";
-import type { JwtEnv } from "../types/api";
 import { addSignedJwtMiddleware } from "../middleware/addsignedjwt";
+import {JwtEnv} from "../types/jwt";
 
 const generate = new Hono<{ Bindings: JwtEnv }>();
 
