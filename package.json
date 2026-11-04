@@ -8,7 +8,7 @@
     "deploy": "wrangler deploy",
     "lint": "eslint .",
     "start": "wrangler dev --env=testing",
-    "start:origin": "wrangler dev -c origin/wrangler.toml --port 8821",
+    "start:origin": "wrangler dev -c origin/wrangler.toml --port 8821 --inspector-port 8823",
     "demo:dos": "bash scripts/dos-demo.sh",
     "test": "vitest --run",
     "test-coverage": "vitest run --coverage"
