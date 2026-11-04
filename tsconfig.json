@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "target": "ES2021",
+    "lib": ["ES2021"], // no DOM: @cloudflare/workers-types provides the Workers globals
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "strict": true,
@@ -14,14 +15,14 @@
     "sourceMap": false,
     "resolveJsonModule": true,
     "esModuleInterop": true,
+    "skipLibCheck": true, // dependency .d.ts files don't type-check against each other (e.g. vitest-pool-workers vs zod 4)
+    "types": [
+      "@cloudflare/workers-types",
+      "@cloudflare/vitest-pool-workers"
+    ],
   },
 
   "watchOptions": {
     "excludeDirectories": [".wrangler/*"]
-  },
-
-  "types": [
-    "@cloudflare/workers-types",
-    "@cloudflare/vitest-pool-workers"
-  ]
+  }
 }
