@@ -69,19 +69,37 @@ describe("test /stopdos features work as expected", () => {
     expect(res.status).toBe(413);
     console.log(await res.text());
   });
+});
 
-  // it("verify /stopdos with incorrect content-length doesn't parse entire request body ok", async () => {
-  //   const size = 4;
-  //   const res = await app.request("/stopdos", {
-  //     method: "POST",
-  //     body: "abcdef0123456789",
-  //     headers: new Headers({
-  //       "Content-Type": "text/plain",
-  //       "Content-Length": `${size}`
-  //     })
-  //   });
-  //   expect(res.status).toBe(200);
-  //   const receivedText = await res.text();
-  //   expect(receivedText.length).toEqual(size);
-  // });
+const enc = new TextEncoder();
+const asStream = (s: string) =>
+  new ReadableStream({ start(c) { c.enqueue(enc.encode(s)); c.close(); } });
+const post = (body: BodyInit | null, headers?: HeadersInit) =>
+  app.request("/stopdos", { method: "POST", body, headers });
+
+const limitCases = [
+  { label: "10 bytes", body: "abcdefghij", status: 200 },
+  { label: "11 bytes", body: "abcdefghijk", status: 413 },
+  { label: "6 chars / 12 bytes", body: "éééééé", status: 413 },
+];
+
+describe("/stopdos 10-byte limit", () => {
+  // Content-Length present: bodyLimit decides from the header alone
+  it.each(limitCases)("with Content-Length, $label -> $status", async ({ body, status }) => {
+    const res = await post(body, { "Content-Length": String(enc.encode(body).length) });
+    expect(res.status).toBe(status);
+  });
+
+  // No Content-Length: bodyLimit counts bytes as the handler reads them
+  it.each(limitCases)("streamed, $label -> $status", async ({ body, status }) => {
+    expect((await post(asStream(body))).status).toBe(status);
+  });
+
+  it("accepts an empty POST", async () => {
+    expect((await post(null)).status).toBe(200);
+  });
+
+  // No case for a Content-Length that disagrees with the body: app.request() has no HTTP
+  // framing, so only an in-process request can carry one. Over a socket the header frames
+  // the body: curl -H 'Content-Length: 4' --data-binary abcdef0123456789 echoes "abcd".
 });
