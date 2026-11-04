@@ -30,6 +30,8 @@ jobs:
           at: ~/project
       - run: npx eslint --version
       - run: npx eslint .
+      - run: npx tsc --version
+      - run: npx tsc --noEmit
 
   check-wrangler-ok:
     executor: node/default

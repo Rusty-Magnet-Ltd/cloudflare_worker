@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { assert, describe, expect, it } from "vitest";
 import { JWTPayload } from "hono/utils/jwt/types";
 import { env } from "cloudflare:test";
 import app from "../src/routes";
@@ -85,6 +85,7 @@ describe("test /generate route", () => {
   it("end 2 end test /generate and then /verify OK", async () => {
     const resp = await app.request("/generate", {}, env);
     const xHeader = resp.headers.get(env.SECURITY_HEADER_NAME);
+    assert(xHeader, "/generate didn't return the security header");
     const req = new Request("http://localhost:8787/verify", {
       method: "GET",
       headers: {
