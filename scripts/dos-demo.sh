@@ -70,8 +70,9 @@ run_case "26 bytes sent, Content-Length: 10" 26 "$SHIELD/stopdos" -H 'Content-Le
 run_case "10 bytes sent, Content-Length: 100" 10 "$SHIELD/stopdos" -H 'Content-Length: 100'
 
 mark=$(wc -l < "$LOGS/origin.log")
-status=$(curl -sS -o /dev/null -L -w '%{http_code}' --max-time 20 -H 'Expect:' -H 'Accept: text/html' --data-urlencode 'message=hello' "$SHIELD/stopdos" 2>/dev/null)
-row "small form via the shield, following 303" "303 -> $status" "$(origin_saw "$mark")"
+# every status curl saw while following redirects, e.g. "303 -> 200"
+status=$(curl -sS -o /dev/null -D - -L --max-time 20 -H 'Expect:' -H 'Accept: text/html' --data-urlencode 'message=hello' "$SHIELD/stopdos" 2>/dev/null | awk '/^HTTP\//{print $2}' | paste -sd ' ' - | sed 's/ / -> /g')
+row "small form via the shield, curl -L" "${status:-no response}" "$(origin_saw "$mark")"
 
 # Last on purpose: when the shield cancels an upload that is still streaming in, wrangler
 # dev 4.64's local proxy logs "Network connection lost" and can 503 the next request or

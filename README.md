@@ -97,7 +97,7 @@ REQUEST                                      STATUS      WHAT FRAGILE-ORIGIN REC
 2 MiB via the shield, Content-Length         413         nothing
 26 bytes sent, Content-Length: 10            200         POST /stopdos content-length=10 transfer-encoding=- received=10
 10 bytes sent, Content-Length: 100           408         nothing
-small form via the shield, following 303     303 -> 200  POST /stopdos content-length=13 transfer-encoding=- received=13;GET /stopdos/thanks content-length=- transfer-encoding=- received=0
+small form via the shield, curl -L           303 -> 200  POST /stopdos content-length=13 transfer-encoding=- received=13;GET /stopdos/thanks content-length=- transfer-encoding=- received=0
 2 MiB via the shield, chunked (no length)    413         nothing
 ```
 
