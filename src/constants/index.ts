@@ -12,12 +12,12 @@ export const features = [
     description: "GET check JWT in good standing"
   },
   {
-    title: "/dosbody",
-    description: "POST request that trips if you send 5> bytes"
+    title: "/stopdos",
+    description: "POST request that trips if you send more than 10 bytes"
   },
   {
     title: "/content",
-    description: "POST request that checks the content-length VS whatever the client sent"
+    description: "POST request that counts the body and compares it to the content-length the client declared"
   },
   {
     title: "/expensive",
