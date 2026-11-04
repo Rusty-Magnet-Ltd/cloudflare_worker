@@ -1,0 +1,13 @@
+# fragile-origin: a stand-in for a backend service with no DoS protection.
+# It has no public address. The only way in is the shield's ORIGIN service binding.
+name = "fragile-origin"
+main = "index.ts"
+compatibility_date = "2024-08-15"
+compatibility_flags = ["nodejs_compat"]
+
+workers_dev = false   # no *.workers.dev URL
+preview_urls = false  # no per-version preview URLs
+# no `routes` and no custom domain, on purpose
+
+[observability]
+enabled = true
