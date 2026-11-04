@@ -15,6 +15,13 @@ assets = { directory = "./public/static", binding = "ASSETS" }
 SECURITY_HEADER_NAME = "X-Header"
 SIGNING_ALGORITHM = "HS256"
 ENVIRONMENT= "prod"
+BODY_DEADLINE_MS = "10000" # a /stopdos POST body must arrive within this
+
+# /stopdos forwards to fragile-origin (origin/wrangler.toml), which has no public route.
+# Service bindings don't inherit between environments, so each one declares it.
+[[env.production.services]]
+binding = "ORIGIN"
+service = "fragile-origin"
 
 # `wrangler dev --env=testing` picks up variables in this section
 # NOTE [vars] is a non-inheritable key so not usable when using environment specific
@@ -26,6 +33,11 @@ SECURITY_HEADER_NAME = "X-Header"
 SECRET_KEY = "dummy"
 SIGNING_ALGORITHM = "HS256"
 ENVIRONMENT = "TESTING"
+BODY_DEADLINE_MS = "2000"
+
+[[env.testing.services]]
+binding = "ORIGIN"
+service = "fragile-origin"
 
 [dev]
 port = 8787
