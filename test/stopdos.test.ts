@@ -148,6 +148,15 @@ describe("/stopdos shield: what reaches the origin", () => {
     expect(res.headers.get("location")).toBe("/stopdos/thanks");
   });
 
+  it("copes with the immutable headers a real binding response has", async () => {
+    // Response.redirect() has immutable headers, like anything fetched over ORIGIN.
+    // The app's poweredBy() middleware still has to be able to add its header.
+    const origin = stubOrigin(() => Response.redirect("http://fragile-origin/stopdos/thanks", 303));
+    const res = await send(origin, post("message=hi", { Accept: "text/html" }));
+    expect(res.status).toBe(303);
+    expect(res.headers.get("x-powered-by")).toBe("Hono");
+  });
+
   it("passes GETs straight through", async () => {
     const origin = stubOrigin(() => new Response("form page"));
     const res = await app.request("/stopdos/thanks", {}, { ...env, ORIGIN: origin.ORIGIN });

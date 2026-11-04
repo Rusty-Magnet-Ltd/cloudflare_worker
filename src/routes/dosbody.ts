@@ -7,20 +7,25 @@ import type { ShieldAppEnv } from "../types/shield";
 const stopDos = new Hono<ShieldAppEnv>();
 const paths = ["/stopdos", "/stopdos/*"];
 
+// A binding's response has immutable headers; copy it so app middleware can add to them
+const relay = (res: Response) => new Response(res.body, res);
+
 // GETs (the form, the good page) pass straight through
-stopDos.on("GET", paths, (c) => c.env.ORIGIN.fetch(new Request(c.req.raw, { redirect: "manual" })));
+stopDos.on("GET", paths, async (c) =>
+  relay(await c.env.ORIGIN.fetch(new Request(c.req.raw, { redirect: "manual" })))
+);
 
 // POSTs reach the origin only as a checked, buffered copy
-stopDos.on("POST", paths, guardBody(), (c) => {
+stopDos.on("POST", paths, guardBody(), async (c) => {
   const headers = new Headers(c.req.raw.headers);
   headers.delete("content-length"); // the runtime frames the buffered copy itself
   headers.delete("transfer-encoding");
-  return c.env.ORIGIN.fetch(c.req.url, {
+  return relay(await c.env.ORIGIN.fetch(c.req.url, {
     method: "POST",
     headers,
     body: c.get("body"),
     redirect: "manual" // pass the origin's 303 to the browser rather than following it here
-  });
+  }));
 });
 
 export default stopDos;
