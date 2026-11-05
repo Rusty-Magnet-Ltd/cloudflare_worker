@@ -1,5 +1,7 @@
 import type { Context, MiddlewareHandler } from "hono";
+import { html } from "hono/html";
 import type { ShieldAppEnv } from "../types/shield";
+import { page } from "../views/page";
 
 export const MAX_BODY_BYTES = 100; // demo-sized so it trips by hand; the production incident was at 1 MiB
 const DEFAULT_DEADLINE_MS = 10_000;
@@ -10,7 +12,7 @@ export function guardBody(maxBytes = MAX_BODY_BYTES): MiddlewareHandler<ShieldAp
   return async (c, next) => {
     const header = c.req.header("content-length"); // repeated headers arrive joined: "5, 5"
     const declared = header !== undefined && /^\d+$/.test(header) ? Number(header) : null;
-    const refuse = (status: Status, error: string, received: number | null = null) =>
+    const refuse = (status: Status, error: ErrorCode, received: number | null = null) =>
       reject(c, status, { error, limit: maxBytes, declared, received });
 
     // 1. Content-Length must be one plain number: no signs, decimals, spaces or lists
@@ -39,6 +41,12 @@ export function guardBody(maxBytes = MAX_BODY_BYTES): MiddlewareHandler<ShieldAp
 }
 
 type Status = 400 | 408 | 413;
+type ErrorCode =
+  | "malformed_content_length"
+  | "conflicting_framing"
+  | "payload_too_large"
+  | "body_timeout"
+  | "content_length_mismatch";
 type ReadResult =
   | { outcome: "ok"; bytes: Uint8Array }
   | { outcome: "too_large"; received: number }
@@ -90,15 +98,33 @@ const STATUS_TEXT: Record<Status, string> = {
   413: "Payload Too Large"
 };
 
-type Rejection = { error: string; limit: number; declared: number | null; received: number | null };
+// Each refusal, in words a person at a browser can follow
+const REASONS: Record<ErrorCode, string> = {
+  malformed_content_length: "The Content-Length header wasn't a single plain number.",
+  conflicting_framing:
+    "The request had both Content-Length and Transfer-Encoding headers, which is how request smuggling starts.",
+  payload_too_large: "The body was too big.",
+  body_timeout: "The body was still arriving when the deadline passed.",
+  content_length_mismatch: "The body wasn't the length its Content-Length header said it was."
+};
+
+type Rejection = { error: ErrorCode; limit: number; declared: number | null; received: number | null };
 
 // Browsers get a page they can show; everyone else gets JSON
 function reject(c: Context, status: Status, detail: Rejection) {
   if ((c.req.header("accept") ?? "").includes("text/html")) {
     const title = `${status} ${STATUS_TEXT[status]}`;
+    const back = "/" + c.req.path.replace(/^\/+/, ""); // one leading slash: never a //host link
     return c.html(
-      `<!doctype html><title>${title}</title><h1>${title}</h1>` +
-        `<p>${detail.error.replaceAll("_", " ")}. Bodies are limited to ${detail.limit} bytes.</p>`,
+      page(
+        `${title} · foobar`,
+        html`<section class="page" aria-labelledby="refused-title">
+      <p class="eyebrow">DoS shield · refused</p>
+      <h1 id="refused-title">${title}</h1>
+      <p class="lead">${REASONS[detail.error]} Bodies are limited to ${detail.limit} bytes, and nothing was forwarded to the origin.</p>
+      <p class="actions"><a class="button" href="${back}"><span aria-hidden="true">&larr;</span> Back to ${back}</a></p>
+    </section>`
+      ),
       status
     );
   }

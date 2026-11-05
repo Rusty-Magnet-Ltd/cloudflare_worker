@@ -249,6 +249,7 @@ http://localhost:4040/status
 ### Design choices
 
 - Started on [itty-router](https://itty.dev/itty-router). But docs and testing were clearer with [Hono](https://hono.dev/guides/examples).
+- Every HTML page, on both Workers, uses one shell (`src/views/page.ts`) and one stylesheet (`public/static/site.css`), in the same design as [rustymagnet.xyz](https://rustymagnet.xyz/). The shield serves the stylesheet as a static asset; `fragile-origin`'s pages link to it too, because browsers only reach them through the shield.
 - The app used `Grouping` of routers to slim down code into discrete files.  Link [here](https://hono.dev/docs/api/routing).
 - Local dev connects to `ngrox` tunnelling.
 - Setting the `ENVIRONMENT` variable needs to be handled; a great article [here](https://www.raulmelo.me/en/blog/best-practices-for-handling-per-environment-config-js-ts-applications)

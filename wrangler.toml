@@ -23,6 +23,10 @@ BODY_DEADLINE_MS = "10000" # a /stopdos POST body must arrive within this
 binding = "ORIGIN"
 service = "fragile-origin"
 
+[env.testing]
+# so `npm start` serves site.css and the favicons too
+assets = { directory = "./public/static", binding = "ASSETS" }
+
 # `wrangler dev --env=testing` picks up variables in this section
 # NOTE [vars] is a non-inheritable key so not usable when using environment specific
 # values in the .devs.vars override these values. Useful default for CI/CD tests

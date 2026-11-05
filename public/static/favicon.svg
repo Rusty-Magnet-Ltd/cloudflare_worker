@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <style>
+    .body { stroke: #b7410e; }
+    .tips { stroke: #8a837d; }
+    @media (prefers-color-scheme: dark) {
+      .body { stroke: #f08354; }
+      .tips { stroke: #b3aca5; }
+    }
+  </style>
+  <g fill="none" stroke-width="7" transform="translate(18.2 18.15) rotate(-35) translate(-16 -16)">
+    <path class="body" d="M7.5 10v6.5a8.5 8.5 0 0 0 17 0V10"/>
+    <path class="tips" d="M7.5 4v6M24.5 4v6"/>
+  </g>
+</svg>
