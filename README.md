@@ -7,6 +7,10 @@ Code powers [foobar.rustymagnet.xyz](https://foobar.rustymagnet.xyz/).
 <!-- TOC -->
 
 - [Cloudflare Worker](#cloudflare-worker)
+- [DoS shield: /stopdos](#dos-shield-stopdos)
+  - [What the shield checks](#what-the-shield-checks)
+  - [Run the demo](#run-the-demo)
+  - [Lock down the origin](#lock-down-the-origin)
 - [Learnings](#learnings)
   - [Time](#time)
   - [Testing](#testing)
@@ -47,6 +51,67 @@ sequenceDiagram
    CircleCI->>CircleCI: Check if Master branch 
    CircleCI->>Cloudflare: Wrangler cli uploads change to Cloudflare based on the deploy flag
 ```
+
+
+## DoS shield: /stopdos
+
+Some services have no DoS protection of their own; in production, bodies over 1 MiB crashed them. `/stopdos` shows a Worker standing in front of such a service, middleware style, so oversized or malformed bodies never reach it. `fragile-origin` (in `origin/`) plays the service: it reads every body in full and "crashes" (500) above 100 bytes. The demo uses 100 bytes for both that crash point and the shield's cap so you can trip it by hand; in front of a real service, set the cap to what that service can take.
+
+```mermaid
+flowchart LR
+  client([Browser or API client]) -- "POST /stopdos" --> shield["Shield Worker (this repo)<br/>guardBody()"]
+  shield -- "ORIGIN service binding:<br/>a checked, buffered copy" --> origin["fragile-origin<br/>(origin/wrangler.toml)"]
+```
+
+`fragile-origin` has `workers_dev = false`, `preview_urls = false` and no routes, so it has no address on the internet. The `ORIGIN` binding is the only way in.
+
+### What the shield checks
+
+`guardBody()` (`src/middleware/guardbody.ts`) never trusts `Content-Length`:
+
+| Request | Shield answers | Reaches the origin? |
+|---|---|---|
+| `Content-Length` malformed (`abc`, `-1`, `1e3`) or repeated (`16, 16`) | 400 | No |
+| `Content-Length` and `Transfer-Encoding` together | 400 | No |
+| `Content-Length` over 100 bytes | 413, without reading the body | No |
+| More than 100 bytes actually arrives | 413 as soon as byte 101 arrives, and the stream is cancelled | No |
+| Bytes received differ from `Content-Length` | 400 | No |
+| Body still arriving after `BODY_DEADLINE_MS` | 408 | No |
+| Everything else | The origin's own response | Yes: exactly the checked bytes, re-framed by the runtime |
+
+Errors are a page for `Accept: text/html` and JSON (`{error, limit, declared, received}`) otherwise. The origin's 303 to its good page goes back to the browser rather than being followed by the shield.
+
+`hono/body-limit` isn't used on this path: it trusts a `Content-Length` under the cap and then lets the handler read the stream unbounded, its `parseInt` accepts `abc` and `5, 5`, and it has no deadline.
+
+### Run the demo
+
+```sh
+npm run demo:dos
+```
+
+It starts both Workers under `wrangler dev` (ports 8820-8823; override with `SHIELD_PORT`, `ORIGIN_PORT`, `SHIELD_INSPECTOR_PORT`, `ORIGIN_INSPECTOR_PORT`), sends each case with curl, and stops them:
+
+```
+REQUEST                                      STATUS      WHAT FRAGILE-ORIGIN RECEIVED
+200 bytes straight to the origin (no shield) 500         POST /stopdos content-length=200 transfer-encoding=- received=200
+200 bytes via the shield, Content-Length     413         nothing
+26 bytes sent, Content-Length: 10            200         POST /stopdos content-length=10 transfer-encoding=- received=10
+10 bytes sent, Content-Length: 100           408         nothing
+small form via the shield, curl -L           303 -> 200  POST /stopdos content-length=13 transfer-encoding=- received=13;GET /stopdos/thanks content-length=- transfer-encoding=- received=0
+200 bytes via the shield, chunked, no length 413         nothing
+```
+
+Locally the origin also listens on a port of its own, which it never has when deployed. The first row uses it to show what an attacker gets when a service can be reached without the shield.
+
+To click through the form instead, run `npm start` and `npm run start:origin` side by side and open `http://localhost:8787/stopdos`. The shield finds the origin through wrangler's dev registry.
+
+### Lock down the origin
+
+If the service is reachable directly, attackers skip the Worker. `fragile-origin` is safe only because it has no address at all. A real service that isn't a Worker does have one, so close every way to it that doesn't go through the shield, including DNS-only records and old hostnames that expose its IP:
+
+- **Cloudflare Tunnel.** `cloudflared` runs next to the service and makes outbound-only connections to Cloudflare, so the service needs no public IP or open inbound port. Protect the tunnel's hostname with a Cloudflare Access policy that admits only the shield (for example, a service token the Worker sends), or that hostname becomes the new way around.
+- **Authenticated Origin Pulls (mTLS).** The service accepts only TLS connections that present a client certificate. Use zone-level or per-hostname AOP with a certificate you upload: global AOP's certificate is shared across all Cloudflare accounts, so it only proves a request came from the Cloudflare network, not from your account ([docs](https://developers.cloudflare.com/ssl/origin-configuration/authenticated-origin-pull/)). Whether a Worker's own `fetch()` presents the AOP certificate isn't covered there; test it. A Worker can present a client certificate itself through an [`mtls_certificates` binding](https://developers.cloudflare.com/workers/runtime-apis/bindings/mtls/), but not toward a proxied zone on Cloudflare.
+- **IP allowlist plus a secret header.** Firewall the service to [Cloudflare's IP ranges](https://developers.cloudflare.com/fundamentals/concepts/cloudflare-ip-addresses/), and have the shield add a secret header (stored as a Worker secret) that the service checks. Those ranges are shared by every proxied hostname, so the allowlist alone also admits other Cloudflare customers' traffic. The secret is what proves the request came from your shield.
 
 
 ## Learnings

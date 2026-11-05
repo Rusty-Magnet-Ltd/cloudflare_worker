@@ -47,6 +47,8 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/project
+      # fragile-origin first: the shield's ORIGIN service binding needs it to exist
+      - run: npx wrangler deploy -c origin/wrangler.toml
       # pass in environment flag to tell cloudflare what environment to push
       - run: npx wrangler deploy -e production
 
