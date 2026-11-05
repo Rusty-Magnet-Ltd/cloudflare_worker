@@ -1,8 +1,7 @@
 import { env } from "cloudflare:test";
 import { describe, expect, it } from "vitest";
+import { MAX_BODY_BYTES as CAP } from "../src/middleware/guardbody";
 import app from "../src/routes";
-
-const MiB = 1024 * 1024;
 const bytesOf = (n: number) => new Uint8Array(n).fill(0x61); // n bytes of "a"
 const streamOf = (chunk: Uint8Array) =>
   new ReadableStream({ start(c) { c.enqueue(chunk); c.close(); } });
@@ -32,28 +31,32 @@ describe("/stopdos shield: rejections never reach the origin", () => {
   it.each([
     ["with Content-Length", withLength],
     ["streamed", (b: Uint8Array) => post(streamOf(b))]
-  ])("%s: exactly 1 MiB is forwarded, 1 MiB + 1 gets 413", async (_, init) => {
+  ])("%s: exactly the cap is forwarded, one byte more gets 413", async (_, init) => {
     const accepted = stubOrigin();
-    expect((await send(accepted, init(bytesOf(MiB)))).status).toBe(200);
+    expect((await send(accepted, init(bytesOf(CAP)))).status).toBe(200);
     expect(accepted.calls).toHaveLength(1);
-    expect(accepted.calls[0].body.byteLength).toBe(MiB);
+    expect(accepted.calls[0].body.byteLength).toBe(CAP);
 
     const refused = stubOrigin();
-    const res = await send(refused, init(bytesOf(MiB + 1)));
+    const res = await send(refused, init(bytesOf(CAP + 1)));
     expect(res.status).toBe(413);
     expect(refused.calls).toHaveLength(0);
   });
 
   it("cuts off an endless stream at the cap and cancels it", async () => {
+    const chunk = 16;
     let cancelled = false;
     const endless = new ReadableStream({
-      pull(c) { c.enqueue(bytesOf(64 * 1024)); },
+      pull(c) { c.enqueue(bytesOf(chunk)); },
       cancel() { cancelled = true; }
     });
     const origin = stubOrigin();
     const res = await send(origin, post(endless));
     expect(res.status).toBe(413);
-    expect(await res.json()).toMatchObject({ error: "payload_too_large", received: MiB + 64 * 1024 });
+    const { error, received } = await res.json<{ error: string; received: number }>();
+    expect(error).toBe("payload_too_large");
+    expect(received).toBeGreaterThan(CAP); // stopped within one chunk of the cap
+    expect(received).toBeLessThanOrEqual(CAP + chunk);
     expect(cancelled).toBe(true);
     expect(origin.calls).toHaveLength(0);
   });
@@ -62,7 +65,7 @@ describe("/stopdos shield: rejections never reach the origin", () => {
     const origin = stubOrigin();
     const res = await send(origin, post(bytesOf(16), { "Content-Length": "4" }));
     expect(res.status).toBe(400);
-    expect(await res.json()).toEqual({ error: "content_length_mismatch", limit: MiB, declared: 4, received: 16 });
+    expect(await res.json()).toEqual({ error: "content_length_mismatch", limit: CAP, declared: 4, received: 16 });
     expect(origin.calls).toHaveLength(0);
   });
 
@@ -113,15 +116,15 @@ describe("/stopdos shield: rejections never reach the origin", () => {
   });
 
   it("answers 413 as a page for browsers and as JSON for API clients", async () => {
-    const big = { "Content-Length": String(2 * MiB) };
-    const page = await send(stubOrigin(), post(bytesOf(2 * MiB), { ...big, Accept: "text/html" }));
+    const big = { "Content-Length": String(2 * CAP) };
+    const page = await send(stubOrigin(), post(bytesOf(2 * CAP), { ...big, Accept: "text/html" }));
     expect(page.status).toBe(413);
     expect(page.headers.get("content-type")).toContain("text/html");
     expect(await page.text()).toContain("413 Payload Too Large");
 
-    const api = await send(stubOrigin(), post(bytesOf(2 * MiB), { ...big, Accept: "application/json" }));
+    const api = await send(stubOrigin(), post(bytesOf(2 * CAP), { ...big, Accept: "application/json" }));
     expect(api.status).toBe(413);
-    expect(await api.json()).toEqual({ error: "payload_too_large", limit: MiB, declared: 2 * MiB, received: null });
+    expect(await api.json()).toEqual({ error: "payload_too_large", limit: CAP, declared: 2 * CAP, received: null });
   });
 });
 

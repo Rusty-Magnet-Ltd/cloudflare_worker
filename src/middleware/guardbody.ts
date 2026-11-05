@@ -1,7 +1,7 @@
 import type { Context, MiddlewareHandler } from "hono";
 import type { ShieldAppEnv } from "../types/shield";
 
-export const MAX_BODY_BYTES = 1024 * 1024; // 1 MiB: bodies past this crashed the origin
+export const MAX_BODY_BYTES = 100; // demo-sized so it trips by hand; the production incident was at 1 MiB
 const DEFAULT_DEADLINE_MS = 10_000;
 
 // Reads a request body without trusting anything the client declared about it.

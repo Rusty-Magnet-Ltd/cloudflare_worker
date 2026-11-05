@@ -33,7 +33,7 @@ wait_for "$ORIGIN/stopdos" || { echo "fragile-origin didn't start; see $LOGS/ori
 wait_for "$SHIELD/stopdos" || { echo "the shield couldn't reach fragile-origin; see $LOGS/shield.log"; exit 1; }
 
 payload() { head -c "$1" /dev/zero | tr '\0' a; }
-MiB2=$((2 * 1024 * 1024))
+OVER=200 # bytes: twice the 100-byte cap
 
 # What fragile-origin logged after line $1 of its log ("nothing" if it saw nothing)
 origin_saw() {
@@ -64,8 +64,8 @@ run_case() {
 
 echo
 row "REQUEST" "STATUS" "WHAT FRAGILE-ORIGIN RECEIVED"
-run_case "2 MiB straight to the origin (no shield)" "$MiB2" "$ORIGIN/stopdos"
-run_case "2 MiB via the shield, Content-Length" "$MiB2" "$SHIELD/stopdos"
+run_case "200 bytes straight to the origin (no shield)" "$OVER" "$ORIGIN/stopdos"
+run_case "200 bytes via the shield, Content-Length" "$OVER" "$SHIELD/stopdos"
 run_case "26 bytes sent, Content-Length: 10" 26 "$SHIELD/stopdos" -H 'Content-Length: 10'
 run_case "10 bytes sent, Content-Length: 100" 10 "$SHIELD/stopdos" -H 'Content-Length: 100'
 
@@ -77,7 +77,7 @@ row "small form via the shield, curl -L" "${status:-no response}" "$(origin_saw 
 # Last on purpose: when the shield cancels an upload that is still streaming in, wrangler
 # dev 4.64's local proxy logs "Network connection lost" and can 503 the next request or
 # exit. That proxy only exists in local dev.
-run_case "2 MiB via the shield, chunked (no length)" "$MiB2" "$SHIELD/stopdos" -H 'Transfer-Encoding: chunked'
+run_case "200 bytes via the shield, chunked, no length" "$OVER" "$SHIELD/stopdos" -H 'Transfer-Encoding: chunked'
 
 cat <<EOF
 

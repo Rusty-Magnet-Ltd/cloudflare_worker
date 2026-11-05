@@ -55,7 +55,7 @@ sequenceDiagram
 
 ## DoS shield: /stopdos
 
-Some services have no DoS protection of their own; in production, bodies over 1 MiB crashed them. `/stopdos` shows a Worker standing in front of such a service, middleware style, so oversized or malformed bodies never reach it. `fragile-origin` (in `origin/`) plays the service: it reads every body in full and "crashes" (500) above 1 MiB.
+Some services have no DoS protection of their own; in production, bodies over 1 MiB crashed them. `/stopdos` shows a Worker standing in front of such a service, middleware style, so oversized or malformed bodies never reach it. `fragile-origin` (in `origin/`) plays the service: it reads every body in full and "crashes" (500) above 100 bytes. The demo uses 100 bytes for both that crash point and the shield's cap so you can trip it by hand; in front of a real service, set the cap to what that service can take.
 
 ```mermaid
 flowchart LR
@@ -73,8 +73,8 @@ flowchart LR
 |---|---|---|
 | `Content-Length` malformed (`abc`, `-1`, `1e3`) or repeated (`16, 16`) | 400 | No |
 | `Content-Length` and `Transfer-Encoding` together | 400 | No |
-| `Content-Length` over 1 MiB | 413, without reading the body | No |
-| More than 1 MiB actually arrives | 413 at 1 MiB + 1, and the stream is cancelled | No |
+| `Content-Length` over 100 bytes | 413, without reading the body | No |
+| More than 100 bytes actually arrives | 413 as soon as byte 101 arrives, and the stream is cancelled | No |
 | Bytes received differ from `Content-Length` | 400 | No |
 | Body still arriving after `BODY_DEADLINE_MS` | 408 | No |
 | Everything else | The origin's own response | Yes: exactly the checked bytes, re-framed by the runtime |
@@ -93,12 +93,12 @@ It starts both Workers under `wrangler dev` (ports 8820-8823; override with `SHI
 
 ```
 REQUEST                                      STATUS      WHAT FRAGILE-ORIGIN RECEIVED
-2 MiB straight to the origin (no shield)     500         POST /stopdos content-length=2097152 transfer-encoding=- received=2097152
-2 MiB via the shield, Content-Length         413         nothing
+200 bytes straight to the origin (no shield) 500         POST /stopdos content-length=200 transfer-encoding=- received=200
+200 bytes via the shield, Content-Length     413         nothing
 26 bytes sent, Content-Length: 10            200         POST /stopdos content-length=10 transfer-encoding=- received=10
 10 bytes sent, Content-Length: 100           408         nothing
 small form via the shield, curl -L           303 -> 200  POST /stopdos content-length=13 transfer-encoding=- received=13;GET /stopdos/thanks content-length=- transfer-encoding=- received=0
-2 MiB via the shield, chunked (no length)    413         nothing
+200 bytes via the shield, chunked, no length 413         nothing
 ```
 
 Locally the origin also listens on a port of its own, which it never has when deployed. The first row uses it to show what an attacker gets when a service can be reached without the shield.

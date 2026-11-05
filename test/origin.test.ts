@@ -1,14 +1,14 @@
 import { describe, expect, it } from "vitest";
 import origin from "../origin/index";
 
-const MiB = 1024 * 1024;
-
 // fragile-origin on its own: what anyone reaching it directly gets
 describe("fragile-origin", () => {
-  it("crashes on a 2 MiB body", async () => {
-    const res = await origin.request("/stopdos", { method: "POST", body: new Uint8Array(2 * MiB) });
+  it("crashes on a body over 100 bytes, and takes 100", async () => {
+    const res = await origin.request("/stopdos", { method: "POST", body: new Uint8Array(101) });
     expect(res.status).toBe(500);
     expect(await res.text()).toBe("crashed (simulated)");
+    const ok = await origin.request("/stopdos", { method: "POST", body: new Uint8Array(100) });
+    expect(ok.status).toBe(200);
   });
 
   it("sends browsers to the good page after a small form", async () => {

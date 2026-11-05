@@ -13,7 +13,7 @@ export const features = [
   },
   {
     title: "/stopdos",
-    description: "GET a form whose POST goes through a shield: bodies over 1 MiB, or with a missing or wrong Content-Length, never reach the fragile origin behind it"
+    description: "GET a form whose POST goes through a shield: bodies over 100 bytes, or with a missing or wrong Content-Length, never reach the fragile origin behind it"
   },
   {
     title: "/content",

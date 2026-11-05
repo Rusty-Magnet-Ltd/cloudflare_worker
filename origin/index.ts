@@ -1,7 +1,8 @@
 import { Hono } from "hono";
 
-// The real service fell over on bodies past 1 MiB. This one pretends to.
-const CRASH_ABOVE_BYTES = 1024 * 1024;
+// The real service fell over on bodies past 1 MiB. This one pretends to at a demo-sized
+// 100 bytes, the same as the shield's cap, so it's easy to trip by hand.
+const CRASH_ABOVE_BYTES = 100;
 
 const origin = new Hono<{ Variables: { received: number } }>();
 
@@ -36,7 +37,7 @@ const formPage = `<!doctype html>
   <head><meta charset="utf-8"><title>Submit a form</title></head>
   <body>
     <h1>Submit a form</h1>
-    <p>Bodies over 1 MiB used to crash this service. The shield in front of it now refuses them.</p>
+    <p>This service crashes on bodies over 100 bytes. Through the shield they're refused; sent straight here, they crash it.</p>
     <form method="post" action="/stopdos">
       <h2>URL-encoded</h2>
       <textarea name="message" rows="6" cols="60"></textarea>
