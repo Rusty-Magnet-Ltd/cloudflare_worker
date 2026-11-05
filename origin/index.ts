@@ -48,6 +48,21 @@ const formPage = `<!doctype html>
       <input type="file" name="upload">
       <p><button type="submit">Send file</button></p>
     </form>
+    <h2>How it works</h2>
+    <pre role="img" aria-label="POST /stopdos goes to the shield Worker. It forwards a checked copy to fragile-origin over the ORIGIN service binding, or refuses the request with 400, 408 or 413. Once deployed, fragile-origin has no public address, so it can't be reached directly.">
+client ── POST /stopdos ──► shield Worker ── ORIGIN binding ──► fragile-origin
+                            guardBody()      checked copy       no public address
+                              │
+                              └─► refused, nothing forwarded
+                                  400  malformed Content-Length
+                                  400  Content-Length plus Transfer-Encoding
+                                  413  over 100 bytes, declared or counted
+                                  408  body still arriving at the deadline
+                                  400  bytes counted ≠ Content-Length
+
+attacker ── direct to fragile-origin ──✕  no address once deployed
+                                          (locally :8821, where it crashes: 500)
+</pre>
   </body>
 </html>
 `;
