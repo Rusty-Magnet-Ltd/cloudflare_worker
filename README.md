@@ -9,6 +9,7 @@ Code powers [foobar.rustymagnet.xyz](https://foobar.rustymagnet.xyz/).
 - [Cloudflare Worker](#cloudflare-worker)
 - [DoS shield: /stopdos](#dos-shield-stopdos)
   - [What the shield checks](#what-the-shield-checks)
+  - [Turn the shield off](#turn-the-shield-off)
   - [Run the demo](#run-the-demo)
   - [Lock down the origin](#lock-down-the-origin)
 - [Learnings](#learnings)
@@ -82,6 +83,19 @@ flowchart LR
 Errors are a page for `Accept: text/html` and JSON (`{error, limit, declared, received}`) otherwise. The origin's 303 to its good page goes back to the browser rather than being followed by the shield.
 
 `hono/body-limit` isn't used on this path: it trusts a `Content-Length` under the cap and then lets the handler read the stream unbounded, its `parseInt` accepts `abc` and `5, 5`, and it has no deadline.
+
+### Turn the shield off
+
+If the shield itself misbehaves, for example by refusing bodies it should let through, `STOPDOS_SHIELD` turns it off. Set to `off`, POSTs go to `fragile-origin` exactly as the client sent them, the way GETs already do. Any other value, or none, leaves the shield on, so a typo can't turn it off. While it's off nothing protects the origin: bodies over 100 bytes crash it again, and every unchecked POST logs a warning (`stopdos shield is off ...`).
+
+- **Fastest, no pull request.** In the Cloudflare dashboard, open Workers & Pages → `foo` → Settings → Variables and Secrets, set `STOPDOS_SHIELD` to `off` and deploy. The next deploy from CircleCI (any merge to `master`) puts back the value in `wrangler.toml`, so if the shield has to stay off, change it there too.
+- **Through Git.** Set `STOPDOS_SHIELD = "off"` under `[env.production.vars]` in `wrangler.toml` and merge.
+
+Turn it back on the same way, with `on`. To see which way it's set, send 101 bytes: 413 means the shield is on, and 500 (the origin crashing) means it's off.
+
+```sh
+head -c 101 /dev/zero | curl -s -o /dev/null -w '%{http_code}\n' --data-binary @- https://foobar.rustymagnet.xyz/stopdos
+```
 
 ### Run the demo
 

@@ -2,6 +2,7 @@ import { env } from "cloudflare:test";
 import { describe, expect, it } from "vitest";
 import { MAX_BODY_BYTES as CAP } from "../src/middleware/guardbody";
 import app from "../src/routes";
+import type { ShieldEnv } from "../src/types/shield";
 const bytesOf = (n: number) => new Uint8Array(n).fill(0x61); // n bytes of "a"
 const streamOf = (chunk: Uint8Array) =>
   new ReadableStream({ start(c) { c.enqueue(chunk); c.close(); } });
@@ -22,8 +23,8 @@ function stubOrigin(respond: () => Response = () => Response.json({ ok: true }))
   return { ORIGIN, calls };
 }
 
-const send = (origin: ReturnType<typeof stubOrigin>, init: RequestInit, deadlineMs = "2000") =>
-  app.request("/stopdos", init, { ...env, ORIGIN: origin.ORIGIN, BODY_DEADLINE_MS: deadlineMs });
+const send = (origin: ReturnType<typeof stubOrigin>, init: RequestInit, vars: Partial<ShieldEnv> = {}) =>
+  app.request("/stopdos", init, { ...env, ORIGIN: origin.ORIGIN, BODY_DEADLINE_MS: "2000", ...vars });
 const post = (body: BodyInit | null, headers: HeadersInit = {}) => ({ method: "POST", body, headers });
 const withLength = (body: Uint8Array) => post(body, { "Content-Length": String(body.byteLength) });
 
@@ -108,7 +109,7 @@ describe("/stopdos shield: rejections never reach the origin", () => {
       cancel() { cancelled = true; }
     });
     const origin = stubOrigin();
-    const res = await send(origin, post(stalled), "20");
+    const res = await send(origin, post(stalled), { BODY_DEADLINE_MS: "20" });
     expect(res.status).toBe(408);
     expect(await res.json()).toMatchObject({ error: "body_timeout", received: 10 });
     expect(cancelled).toBe(true);
@@ -165,5 +166,44 @@ describe("/stopdos shield: what reaches the origin", () => {
     const res = await app.request("/stopdos/thanks", {}, { ...env, ORIGIN: origin.ORIGIN });
     expect(await res.text()).toBe("form page");
     expect(origin.calls).toMatchObject([{ method: "GET", path: "/stopdos/thanks" }]);
+  });
+});
+
+describe("/stopdos shield: the off switch", () => {
+  it("is on in the testing environment, as in production", () => {
+    expect(env.STOPDOS_SHIELD).toBe("on");
+  });
+
+  it.each(["off", "OFF", " Off "])("STOPDOS_SHIELD=%j forwards what the shield would refuse, untouched", async (setting) => {
+    const origin = stubOrigin();
+    const body = bytesOf(CAP + 1);
+    const res = await send(origin, post(body, { "Content-Length": String(body.byteLength) }), { STOPDOS_SHIELD: setting });
+    expect(res.status).toBe(200); // the stub's answer: the real origin would crash
+    expect(origin.calls).toHaveLength(1);
+    expect(origin.calls[0].body.byteLength).toBe(CAP + 1);
+    expect(origin.calls[0].headers.get("content-length")).toBe(String(CAP + 1)); // the client's framing, as sent
+  });
+
+  it("skips the framing checks too", async () => {
+    const origin = stubOrigin();
+    const res = await send(origin, post(bytesOf(16), { "Content-Length": "abc" }), { STOPDOS_SHIELD: "off" });
+    expect(res.status).toBe(200);
+    expect(origin.calls).toHaveLength(1);
+  });
+
+  it.each([["on"], [""], ["false"], ["0"], ["disabled"], [undefined]])(
+    "STOPDOS_SHIELD=%j keeps the shield on",
+    async (setting) => {
+      const origin = stubOrigin();
+      const res = await send(origin, withLength(bytesOf(CAP + 1)), { STOPDOS_SHIELD: setting });
+      expect(res.status).toBe(413);
+      expect(origin.calls).toHaveLength(0);
+    }
+  );
+
+  it("leaves GETs alone either way", async () => {
+    const origin = stubOrigin(() => new Response("form page"));
+    const res = await app.request("/stopdos", {}, { ...env, ORIGIN: origin.ORIGIN, STOPDOS_SHIELD: "off" });
+    expect(await res.text()).toBe("form page");
   });
 });
