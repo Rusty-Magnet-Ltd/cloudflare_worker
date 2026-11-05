@@ -497,7 +497,7 @@ code {
   content: "$ ";
 }
 
-/* Single pages: /carpark, /stopdos, errors */
+/* Single pages: /waiting-room, /stopdos, errors */
 
 .page {
   max-width: 48rem;
@@ -512,6 +512,11 @@ code {
 
 .page .lead {
   margin-top: 1.25rem;
+}
+.page .detail {
+  max-width: 36rem;
+  margin-top: 1rem;
+  color: var(--muted);
 }
 
 .page .actions {
@@ -607,4 +612,30 @@ input[type="file"]::file-selector-button {
   background: var(--surface);
   color: var(--muted);
   font: 0.78rem/1.55 var(--mono);
+}
+
+/* The waiting room's numbers: your place and the estimated wait */
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+  gap: 1rem;
+  margin: 2rem 0 1rem;
+}
+.facts div {
+  padding: 1.1rem 1.2rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.facts dt {
+  color: var(--subtle);
+  font: 600 0.78rem/1.2 var(--mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.facts dd {
+  margin: 0.55rem 0 0;
+  font-size: 1.6rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
 }

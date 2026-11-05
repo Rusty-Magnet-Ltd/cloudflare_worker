@@ -12,6 +12,11 @@ Code powers [foobar.rustymagnet.xyz](https://foobar.rustymagnet.xyz/).
   - [Turn the shield off](#turn-the-shield-off)
   - [Run the demo](#run-the-demo)
   - [Lock down the origin](#lock-down-the-origin)
+- [Waiting room: /waiting-room](#waiting-room-waiting-room)
+  - [How the queue works](#how-the-queue-works)
+  - [Turn the queue off](#turn-the-queue-off)
+  - [Try it](#try-it)
+  - [Limits](#limits)
 - [Learnings](#learnings)
   - [Time](#time)
   - [Testing](#testing)
@@ -128,6 +133,63 @@ If the service is reachable directly, attackers skip the Worker. `fragile-origin
 - **IP allowlist plus a secret header.** Firewall the service to [Cloudflare's IP ranges](https://developers.cloudflare.com/fundamentals/concepts/cloudflare-ip-addresses/), and have the shield add a secret header (stored as a Worker secret) that the service checks. Those ranges are shared by every proxied hostname, so the allowlist alone also admits other Cloudflare customers' traffic. The secret is what proves the request came from your shield.
 
 
+## Waiting room: /waiting-room
+
+Cloudflare's [Waiting Room](https://developers.cloudflare.com/waiting-room/) queues visitors when a site gets busier than its origin can take. It's only on Business and Enterprise plans, and it only starts queueing above 200 active visitors, so it can't run on this zone, and on any plan it's hard to try by hand. `/waiting-room` is a small one built from the parts Cloudflare built Waiting Room on, [Workers and Durable Objects](https://blog.cloudflare.com/building-waiting-room-on-workers-and-durable-objects/), both of which the Free plan includes.
+
+`fragile-origin` takes 2 visitors at a time. A visitor who's let in has their request sent on to it. Everyone else queues, first come, first served, on a page that reloads itself until it's their turn.
+
+```mermaid
+flowchart LR
+  visitor([Browser]) -- "GET /waiting-room<br/>with its ticket" --> shield["Shield Worker<br/>src/routes/waitingroom.tsx"]
+  shield -- "visit(ticket)" --> room[("WaitingRoom Durable Object<br/>who's in, and the queue")]
+  shield -- "let in: ORIGIN binding,<br/>X-Waiting-Room headers" --> origin["fragile-origin"]
+  shield -. "queued: 202 and<br/>the waiting page" .-> visitor
+```
+
+### How the queue works
+
+- **The ticket.** Each visitor gets a random ID in a cookie (`waiting-room`: `HttpOnly`, `SameSite=Lax`, path `/waiting-room`). It's only a name. Every decision lives in the Durable Object, so there's nothing in the cookie to forge, and a visitor who drops it just joins the back of the queue as someone new.
+- **The room.** One Durable Object per hostname holds who's in and the queue. A Durable Object has a single instance worldwide, so visitors at every Cloudflare location share one count.
+- **Capacity.** `WAITING_ROOM_CAPACITY` (default 2) visitors can be in at once. Each gets `WAITING_ROOM_STAY_SECONDS` (default 30) from when they're let in, and visiting again doesn't renew it. Nobody can stay for ever, so the queue moves at a known pace and the estimated wait holds.
+- **The queue.** When a slot frees up, it goes to whoever is nearest the front, so reloading more often doesn't jump the queue. The waiting page reloads every 5 seconds, or sooner when a slot is due. A visitor who hasn't reloaded for 20 seconds has left, and loses their place. Past 1,000 waiting, new visitors get a 503 page saying the queue is full.
+- **What reaches the origin.** An admitted visitor's request goes over the `ORIGIN` binding with `X-Waiting-Room: admitted`, `X-Waiting-Room-Capacity` and `X-Waiting-Room-Seconds-Left` headers. The shield drops any `X-Waiting-Room` headers a client sends, so `fragile-origin`, which only the shield can reach, can trust them.
+
+| | Cloudflare Waiting Room | `/waiting-room` |
+|---|---|---|
+| Plans | Business (one room) and Enterprise | Any, including Free |
+| Starts queueing | Above 200 active visitors | Above `WAITING_ROOM_CAPACITY` (2) |
+| A visitor's time inside | 1 to 30 minutes after their last request, renewed on each one; only Enterprise can turn renewal off | `WAITING_ROOM_STAY_SECONDS` (30) from when they're let in, never renewed |
+| Queue order | First come, first served; Enterprise can add others | First come, first served |
+| Page while queued | Cloudflare's, with status 200 by default; custom pages are an Enterprise add-on | This repo's, with status 202 |
+
+### Turn the queue off
+
+If the queue itself misbehaves, `WAITING_ROOM_QUEUE` turns it off. Set to `off`, every visitor goes straight to `fragile-origin`, however many there are, and each one logs a warning (`waiting room queue is off ...`). Any other value, or none, keeps the queue on, so a typo can't turn it off. It's changed the same two ways as the shield's switch: in the dashboard (Workers & Pages → `foo` → Settings → Variables and Secrets), until the next deploy from CircleCI puts back the value in `wrangler.toml`, or in `wrangler.toml` itself.
+
+If the Durable Object can't be reached, the shield lets visitors in and logs an error (`waiting room unavailable ...`), rather than keep everyone out.
+
+To see which way it's set, open `/waiting-room`. "You're in" or the waiting page means the queue is on. "You came straight in" means it's off, or broken, and the page says which.
+
+### Try it
+
+Open `/waiting-room` in three browsers, or in normal and private windows, which don't share cookies. The first two are let in. The third waits until the first two visitors' 30 seconds are up, then gets in. From a terminal, give each visitor a cookie jar of its own:
+
+```sh
+for v in a b c; do curl -s -o /dev/null -w "$v %{http_code}\n" -c "/tmp/waiting-room-$v" -b "/tmp/waiting-room-$v" https://foobar.rustymagnet.xyz/waiting-room; done
+```
+
+200 means let in and 202 means queued. Everyone on the site shares the room, so you may queue behind strangers.
+
+Locally, run `npm start` and `npm run start:origin` side by side and open `http://localhost:8787/waiting-room`.
+
+### Limits
+
+- The room lives in the Durable Object's memory. When the object restarts, after a deploy or a while with no visitors, it forgets everyone, and visitors who come back join again.
+- Every page load, including each reload while queued, is a Worker request and a Durable Object request. On the Free plan, that's from 100,000 of each a day ([Durable Objects pricing](https://developers.cloudflare.com/durable-objects/platform/pricing/)).
+- A client that doesn't keep cookies, like most scripts, gets a new ticket on every request. It joins the back of the queue each time, and drops out 20 seconds later.
+
+
 ## Learnings
 
 ### Time
@@ -176,9 +238,9 @@ Testing required `"cloudflare:test"` to access `environment variables` in tests:
 ```typescript
 import { env } from "cloudflare:test";
 
-it("/carpark ok", async () => {
-    const res = await app.request("/carpark", {}, env);
-    expect(res.status).toBe(200);
+it("/generate signs a token", async () => {
+    const res = await app.request("/generate", {}, env);
+    expect(res.status).toBe(201);
 });
 ```
 
@@ -241,7 +303,7 @@ DNS lookup failed.
 
 You could start a backend workflow using a `workflow`; this was written using `QStash` from `Upstash`.  
 
-To test it locally, `ngrok` was used to route all of the Worker requests via ngrok.  So you no longer went to `localhost:8787/carpark`.  Instead you used: `https://abcd.ngrok-free.app/carpark`
+To test it locally, `ngrok` was used to route all of the Worker requests via ngrok.  So you no longer went to `localhost:8787/waiting-room`.  Instead you used: `https://abcd.ngrok-free.app/waiting-room`
 
 > [!CAUTION]
 > This wouldn't work when other software were proxying client connections.
@@ -264,6 +326,7 @@ http://localhost:4040/status
 
 - Started on [itty-router](https://itty.dev/itty-router). But docs and testing were clearer with [Hono](https://hono.dev/guides/examples).
 - Every HTML page, on both Workers, uses one shell (`src/views/page.ts`) and one stylesheet (`public/static/site.css`), in the same design as [rustymagnet.xyz](https://rustymagnet.xyz/). The shield serves the stylesheet as a static asset; `fragile-origin`'s pages link to it too, because browsers only reach them through the shield.
+- The waiting room's rules (`src/waitingroom/room.ts`) are plain TypeScript with the clock passed in, so tests can move time on without waiting. The Durable Object (`src/waitingroom/durable.ts`) only wraps them.
 - The app used `Grouping` of routers to slim down code into discrete files.  Link [here](https://hono.dev/docs/api/routing).
 - Local dev connects to `ngrox` tunnelling.
 - Setting the `ENVIRONMENT` variable needs to be handled; a great article [here](https://www.raulmelo.me/en/blog/best-practices-for-handling-per-environment-config-js-ts-applications)

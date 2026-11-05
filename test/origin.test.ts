@@ -31,6 +31,27 @@ describe("fragile-origin", () => {
     expect(await res.json()).toEqual({ ok: true, received: 6, contentLength: 6 });
   });
 
+  it("tells an admitted visitor how long they have, from the shield's X-Waiting-Room headers", async () => {
+    const headers = { "X-Waiting-Room": "admitted", "X-Waiting-Room-Capacity": "2", "X-Waiting-Room-Seconds-Left": "1" };
+    const body = await (await origin.request("/waiting-room", { headers })).text();
+    expect(body).toContain("You're in.");
+    expect(body).toContain("You have 1 second left. fragile-origin can only cope with 2 visitors at a time");
+  });
+
+  it("says why a visitor came straight in", async () => {
+    const text = async (headers: Record<string, string>) => (await origin.request("/waiting-room", { headers })).text();
+    expect(await text({ "X-Waiting-Room": "off" })).toContain("The queue is off (WAITING_ROOM_QUEUE=off)");
+    expect(await text({ "X-Waiting-Room": "unavailable" })).toContain("working right now");
+    expect(await text({})).toContain("come through the shield Worker");
+  });
+
+  it("ignores X-Waiting-Room numbers that aren't whole numbers", async () => {
+    const headers = { "X-Waiting-Room": "admitted", "X-Waiting-Room-Capacity": "<b>2</b>", "X-Waiting-Room-Seconds-Left": "5" };
+    const body = await (await origin.request("/waiting-room", { headers })).text();
+    expect(body).toContain("You came straight in.");
+    expect(body).not.toContain("<b>2</b>");
+  });
+
   it("serves the form and the good page", async () => {
     const form = await origin.request("/stopdos");
     expect(await form.text()).toContain('enctype="multipart/form-data"');

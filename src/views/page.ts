@@ -20,8 +20,9 @@ const mark = raw(
     `</g></svg>`
 );
 
-// title is escaped; content must already be markup (JSX or an html`` template)
-export function page(title: string, content: Content) {
+// title is escaped; content and head must already be markup (JSX or an html`` template).
+// head goes at the end of <head>, for the odd page that needs more there.
+export function page(title: string, content: Content, head: Content | "" = "") {
   return html`<!doctype html>
 <html lang="en-GB">
 <head>
@@ -33,7 +34,7 @@ export function page(title: string, content: Content) {
   <meta name="theme-color" content="#12100e" media="(prefers-color-scheme: dark)">
   <link rel="icon" href="/favicon.ico" sizes="32x32">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="/site.css">
+  <link rel="stylesheet" href="/site.css">${head}
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>

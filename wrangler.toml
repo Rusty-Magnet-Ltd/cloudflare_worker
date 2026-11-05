@@ -5,6 +5,13 @@ compatibility_flags = ["nodejs_compat"]
 
 workers_dev = false
 
+# Creates the waiting room's Durable Object class (src/waitingroom/durable.ts). Free
+# accounts can only use SQLite-backed classes. Environments inherit migrations, unlike
+# bindings.
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["WaitingRoom"]
+
 [env.production]
 name = "foo"
 routes = [{ pattern = "foobar.rustymagnet.xyz", custom_domain = true }]
@@ -17,12 +24,20 @@ SIGNING_ALGORITHM = "HS256"
 ENVIRONMENT= "prod"
 BODY_DEADLINE_MS = "10000" # a /stopdos POST body must arrive within this
 STOPDOS_SHIELD = "on" # "off" sends /stopdos POSTs to the origin unchecked: README, "Turn the shield off"
+WAITING_ROOM_QUEUE = "on" # "off" lets every /waiting-room visitor straight in: README, "Turn the queue off"
+WAITING_ROOM_CAPACITY = "2" # visitors let in at once
+WAITING_ROOM_STAY_SECONDS = "30" # how long each one gets
 
 # /stopdos forwards to fragile-origin (origin/wrangler.toml), which has no public route.
 # Service bindings don't inherit between environments, so each one declares it.
 [[env.production.services]]
 binding = "ORIGIN"
 service = "fragile-origin"
+
+# /waiting-room's count of who's in, and its queue
+[[env.production.durable_objects.bindings]]
+name = "WAITING_ROOM"
+class_name = "WaitingRoom"
 
 [env.testing]
 # so `npm start` serves site.css and the favicons too
@@ -40,10 +55,17 @@ SIGNING_ALGORITHM = "HS256"
 ENVIRONMENT = "TESTING"
 BODY_DEADLINE_MS = "2000"
 STOPDOS_SHIELD = "on"
+WAITING_ROOM_QUEUE = "on"
+WAITING_ROOM_CAPACITY = "2"
+WAITING_ROOM_STAY_SECONDS = "30"
 
 [[env.testing.services]]
 binding = "ORIGIN"
 service = "fragile-origin"
+
+[[env.testing.durable_objects.bindings]]
+name = "WAITING_ROOM"
+class_name = "WaitingRoom"
 
 [dev]
 port = 8787

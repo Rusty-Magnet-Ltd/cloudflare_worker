@@ -40,10 +40,22 @@ describe("home page", () => {
 });
 
 describe("other pages", () => {
-  it("carpark", async () => {
-    const { status, body } = await html(app.request("/carpark", {}, env));
-    expect(status).toBe(200);
-    expect(body).toContain("in the carpark.");
+  it("the waiting room: fragile-origin's page once you're in, the waiting page while you queue", async () => {
+    // fragile-origin's own app stands in for the ORIGIN binding
+    const ORIGIN = { fetch: (input: RequestInfo | URL, init?: RequestInit) => origin.fetch(new Request(input, init)) } as unknown as Fetcher;
+    const url = `https://${crypto.randomUUID()}.test/waiting-room`; // a room of its own: there's one per hostname
+    const vars = { ...env, ORIGIN, WAITING_ROOM_CAPACITY: "1" };
+
+    const admitted = await html(app.request(url, browser, vars));
+    expect(admitted.status).toBe(200);
+    expect(admitted.body).toContain("You're in.");
+    expect(admitted.body).toContain("You have 30 seconds left.");
+
+    const queued = await html(app.request(url, browser, vars));
+    expect(queued.status).toBe(202);
+    expect(queued.body).toContain("in the queue.");
+    expect(queued.body).toContain("Estimated wait");
+    expect(queued.body).toContain("How it works");
   });
 
   it("404 is a page for browsers and plain text for everyone else", async () => {
