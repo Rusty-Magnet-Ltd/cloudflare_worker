@@ -143,7 +143,7 @@ describe("/waiting-room", () => {
     expect(room.calls[0].path).toBe("/waiting-room");
     expect(roomHeaders(room.calls[0].headers)).toEqual({
       "x-waiting-room": "admitted",
-      "x-waiting-room-capacity": "2",
+      "x-waiting-room-capacity": "1",
       "x-waiting-room-seconds-left": "30"
     });
   });

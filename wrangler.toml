@@ -25,7 +25,7 @@ ENVIRONMENT= "prod"
 BODY_DEADLINE_MS = "10000" # a /stopdos POST body must arrive within this
 STOPDOS_SHIELD = "on" # "off" sends /stopdos POSTs to the origin unchecked: README, "Turn the shield off"
 WAITING_ROOM_QUEUE = "on" # "off" lets every /waiting-room visitor straight in: README, "Turn the queue off"
-WAITING_ROOM_CAPACITY = "2" # visitors let in at once
+WAITING_ROOM_CAPACITY = "1" # visitors let in at once: 1, so two browser windows are enough to see the queue
 WAITING_ROOM_STAY_SECONDS = "30" # how long each one gets
 
 # /stopdos forwards to fragile-origin (origin/wrangler.toml), which has no public route.
@@ -56,7 +56,7 @@ ENVIRONMENT = "TESTING"
 BODY_DEADLINE_MS = "2000"
 STOPDOS_SHIELD = "on"
 WAITING_ROOM_QUEUE = "on"
-WAITING_ROOM_CAPACITY = "2"
+WAITING_ROOM_CAPACITY = "1"
 WAITING_ROOM_STAY_SECONDS = "30"
 
 [[env.testing.services]]
