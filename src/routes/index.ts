@@ -5,7 +5,7 @@ import { poweredBy } from "hono/powered-by";
 import generate from "./generate";
 import verify from "./verify";
 import home from "./home";
-import carpark from "./carpark";
+import waitingRoom from "./waitingroom";
 import workflow from "./workflow";
 import expensive from "./expensive";
 import stopDos from "./dosbody";
@@ -44,10 +44,14 @@ app.onError((err, c) => {
 app.route("/", home);
 app.route("/", generate);
 app.route("/", verify);
-app.route("/", carpark);
+app.route("/", waitingRoom);
 app.route("/", workflow);
 app.route("/", expensive);
 app.route("/", stopDos);
 app.route("/", contentLen);
 
 export default app;
+
+// The waiting room's Durable Object class (wrangler.toml binds it as WAITING_ROOM) has to
+// be exported from the Worker's main module
+export { WaitingRoom } from "../waitingroom/durable";

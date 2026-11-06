@@ -45,9 +45,9 @@ export const routes: RouteInfo[] = [
     summary: "Starts a two-step Upstash Workflow on the server."
   },
   {
-    path: "/carpark",
+    path: "/waiting-room",
     methods: ["GET"],
-    summary: "A placeholder page for waiting-room experiments.",
-    open: "Open the carpark"
+    summary: "A waiting room on the Free plan. A Durable Object lets a few visitors at a time through to fragile-origin, and everyone else queues in order.",
+    open: "Open the waiting room"
   }
 ];

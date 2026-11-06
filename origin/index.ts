@@ -34,6 +34,9 @@ origin.post("/stopdos", (c) => {
 
 origin.get("/stopdos/thanks", (c) => c.html(thanksPage));
 
+// The page behind the shield's waiting room (src/routes/waitingroom.tsx)
+origin.get("/waiting-room", (c) => c.html(waitingRoomPage(c.req.raw.headers)));
+
 // Both pages use the site shell. They link /site.css, which the shield serves:
 // browsers only ever reach this Worker through the shield.
 const formPage = page(
@@ -85,5 +88,53 @@ const thanksPage = page(
       <p class="actions"><a class="button" href="/stopdos"><span aria-hidden="true">&larr;</span> Send another</a></p>
     </section>`
 );
+
+// What the shield's waiting room decided about this visitor, from its X-Waiting-Room
+// headers. Once deployed, only the shield can reach this Worker, and it drops any
+// X-Waiting-Room headers a client sends, so they can be trusted here. Locally, on its own
+// port, anyone can fake them.
+function waitingRoomPage(headers: Headers) {
+  const whole = (name: string) => {
+    const n = Number(headers.get(name) ?? NaN);
+    return Number.isInteger(n) && n > 0 ? n : undefined;
+  };
+  const decision = headers.get("x-waiting-room");
+  const capacity = whole("x-waiting-room-capacity");
+  const secondsLeft = whole("x-waiting-room-seconds-left");
+
+  const actions = html`<p class="actions">
+        <a class="button button-primary" href="/waiting-room">Reload</a>
+        <a class="button" href="/#routes"><span aria-hidden="true">&larr;</span> All routes</a>
+      </p>`;
+
+  if (decision === "admitted" && capacity && secondsLeft) {
+    return page(
+      "You're in · foobar",
+      html`<section class="page" aria-labelledby="in-title">
+      <p class="eyebrow">Waiting room · served by fragile-origin</p>
+      <h1 id="in-title">You're in.</h1>
+      <p class="lead">You have ${secondsLeft} ${secondsLeft === 1 ? "second" : "seconds"} left. fragile-origin can only cope with ${capacity} ${capacity === 1 ? "visitor" : "visitors"} at a time, so the shield Worker keeps everyone else in a queue.</p>
+      <p class="detail">When your time's up, reload: you're let straight back in if there's room, or you join the back of the queue if anyone's waiting.</p>
+      ${actions}
+    </section>`
+    );
+  }
+
+  const why =
+    decision === "off"
+      ? "The queue is off (WAITING_ROOM_QUEUE=off), so the shield Worker sends every visitor straight here, however many there are."
+      : decision === "unavailable"
+        ? "The queue isn't working right now, so rather than turn everyone away, the shield Worker is letting everyone in."
+        : "This request didn't come through the shield Worker's queue. Once deployed, fragile-origin has no public address, so only the shield can send visitors here.";
+  return page(
+    "Straight in · foobar",
+    html`<section class="page" aria-labelledby="straight-in-title">
+      <p class="eyebrow">Waiting room · served by fragile-origin</p>
+      <h1 id="straight-in-title">You came straight in.</h1>
+      <p class="lead">${why}</p>
+      ${actions}
+    </section>`
+  );
+}
 
 export default origin;
