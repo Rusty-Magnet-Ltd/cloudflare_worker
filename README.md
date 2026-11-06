@@ -137,7 +137,7 @@ If the service is reachable directly, attackers skip the Worker. `fragile-origin
 
 Cloudflare's [Waiting Room](https://developers.cloudflare.com/waiting-room/) queues visitors when a site gets busier than its origin can take. It's only on Business and Enterprise plans, and it only starts queueing above 200 active visitors, so it can't run on this zone, and on any plan it's hard to try by hand. `/waiting-room` is a small one built from the parts Cloudflare built Waiting Room on, [Workers and Durable Objects](https://blog.cloudflare.com/building-waiting-room-on-workers-and-durable-objects/), both of which the Free plan includes.
 
-`fragile-origin` takes 2 visitors at a time. A visitor who's let in has their request sent on to it. Everyone else queues, first come, first served, on a page that reloads itself until it's their turn.
+`fragile-origin` takes 1 visitor at a time, so two browser windows are enough to see the queue. A visitor who's let in has their request sent on to it. Everyone else queues, first come, first served, on a page that reloads itself until it's their turn.
 
 ```mermaid
 flowchart LR
@@ -151,14 +151,14 @@ flowchart LR
 
 - **The ticket.** Each visitor gets a random ID in a cookie (`waiting-room`: `HttpOnly`, `SameSite=Lax`, path `/waiting-room`). It's only a name. Every decision lives in the Durable Object, so there's nothing in the cookie to forge, and a visitor who drops it just joins the back of the queue as someone new.
 - **The room.** One Durable Object per hostname holds who's in and the queue. A Durable Object has a single instance worldwide, so visitors at every Cloudflare location share one count.
-- **Capacity.** `WAITING_ROOM_CAPACITY` (default 2) visitors can be in at once. Each gets `WAITING_ROOM_STAY_SECONDS` (default 30) from when they're let in, and visiting again doesn't renew it. Nobody can stay for ever, so the queue moves at a known pace and the estimated wait holds.
+- **Capacity.** `WAITING_ROOM_CAPACITY` visitors can be in at once: 1 in both environments, so the queue is easy to see, or 2 if it's unset. Each gets `WAITING_ROOM_STAY_SECONDS` (default 30) from when they're let in, and visiting again doesn't renew it. Nobody can stay for ever, so the queue moves at a known pace and the estimated wait holds.
 - **The queue.** When a slot frees up, it goes to whoever is nearest the front, so reloading more often doesn't jump the queue. The waiting page reloads every 5 seconds, or sooner when a slot is due. A visitor who hasn't reloaded for 20 seconds has left, and loses their place. Past 1,000 waiting, new visitors get a 503 page saying the queue is full.
 - **What reaches the origin.** An admitted visitor's request goes over the `ORIGIN` binding with `X-Waiting-Room: admitted`, `X-Waiting-Room-Capacity` and `X-Waiting-Room-Seconds-Left` headers. The shield drops any `X-Waiting-Room` headers a client sends, so `fragile-origin`, which only the shield can reach, can trust them.
 
 | | Cloudflare Waiting Room | `/waiting-room` |
 |---|---|---|
 | Plans | Business (one room) and Enterprise | Any, including Free |
-| Starts queueing | Above 200 active visitors | Above `WAITING_ROOM_CAPACITY` (2) |
+| Starts queueing | Above 200 active visitors | Above `WAITING_ROOM_CAPACITY` (1) |
 | A visitor's time inside | 1 to 30 minutes after their last request, renewed on each one; only Enterprise can turn renewal off | `WAITING_ROOM_STAY_SECONDS` (30) from when they're let in, never renewed |
 | Queue order | First come, first served; Enterprise can add others | First come, first served |
 | Page while queued | Cloudflare's, with status 200 by default; custom pages are an Enterprise add-on | This repo's, with status 202 |
@@ -173,7 +173,7 @@ To see which way it's set, open `/waiting-room`. "You're in" or the waiting page
 
 ### Try it
 
-Open `/waiting-room` in three browsers, or in normal and private windows, which don't share cookies. The first two are let in. The third waits until the first two visitors' 30 seconds are up, then gets in. From a terminal, give each visitor a cookie jar of its own:
+Open `/waiting-room` in a normal window, then in a private window, which doesn't share the normal window's cookies. The first is let in. The second waits until the first visitor's 30 seconds are up, then gets in. Chrome's incognito windows all share one set of cookies, so a second incognito window is the same visitor as the first. For a third visitor, use another browser or a phone. From a terminal, give each visitor a cookie jar of its own:
 
 ```sh
 for v in a b c; do curl -s -o /dev/null -w "$v %{http_code}\n" -c "/tmp/waiting-room-$v" -b "/tmp/waiting-room-$v" https://foobar.rustymagnet.xyz/waiting-room; done
